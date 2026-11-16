@@ -747,6 +747,139 @@
       margin: 12px 0 18px;
     }
 
+
+    .cart-panel {
+      margin-top: 34px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #f8f9ff;
+    }
+
+    .cart-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cart-heading h3 {
+      margin: 0;
+      color: var(--navy);
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .cart-item:last-child {
+      border-bottom: 0;
+    }
+
+    .cart-item p {
+      margin: 3px 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .cart-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cart-controls button {
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 9px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .cart-checkout {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .cart-empty {
+      color: var(--muted);
+    }
+
+    .product-card {
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .product-card>img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .product-body .button {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .photo-preview {
+      display: block;
+      max-width: 180px;
+      max-height: 120px;
+      object-fit: contain;
+      margin-top: 8px;
+      border-radius: 10px;
+    }
+
+    .photo-required {
+      color: #8a4b00;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    .order-admin-card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .order-admin-card p {
+      margin: 5px 0;
+    }
+
+    @media(max-width:560px) {
+      .cart-panel {
+        padding: 16px;
+      }
+
+      .cart-item {
+        grid-template-columns: 1fr;
+      }
+    }
+
     .hidden {
       display: none !important;
     }
@@ -970,6 +1103,34 @@
 
         </div>
 
+        <div class="cart-panel" id="cartPanel">
+          <div class="cart-heading">
+            <h3>🛒 Mon panier <span id="cartCount">(0)</span></h3>
+            <button class="small-btn" type="button" id="clearCartBtn">Vider le panier</button>
+          </div>
+          <div id="cartItems">
+            <p class="cart-empty">Ton panier est vide pour le moment.</p>
+          </div>
+          <div class="cart-total"><span>Total</span><span id="cartTotal">0,00 $</span></div>
+          <div class="cart-checkout">
+            <h3>Finaliser ma commande</h3>
+            <form id="cartOrderForm" style="box-shadow:none;padding:12px 0 0;border:0">
+              <div class="admin-grid">
+                <div class="field"><label for="cartCustomerName">Votre nom *</label><input id="cartCustomerName"
+                    required autocomplete="name"></div>
+                <div class="field"><label for="cartCustomerEmail">Votre adresse courriel *</label><input
+                    id="cartCustomerEmail" type="email" required autocomplete="email"></div>
+              </div>
+              <div class="field"><label for="cartOrderNotes">Précisions (facultatif)</label><textarea
+                  id="cartOrderNotes" placeholder="Instructions ou détails supplémentaires..."></textarea></div>
+              <p class="note">Si un produit exige une photo, tu pourras l'ajouter directement sous ce produit dans ton
+                panier.</p>
+              <button class="button" id="submitCartOrder" type="submit">Envoyer ma commande</button>
+              <p class="form-message" id="cartOrderMessage" role="status"></p>
+            </form>
+          </div>
+        </div>
+
       </div>
 
     </section>
@@ -1156,8 +1317,14 @@
                   type="number" min="0" step="0.01" required placeholder="20.00"></div>
 
               <div class="field"><label for="productImage">Lien de l'image (facultatif)</label><input id="productImage"
-                  type="url" placeholder="https\://..."></div>
-
+                  type="url" placeholder="https://..."></div>
+              <div class="field"><label for="productImageFile">Ou importer une image</label><input id="productImageFile"
+                  type="file" accept="image/*"><img id="productImagePreview" class="photo-preview hidden"
+                  alt="Aperçu de l'image du produit"></div>
+            </div>
+            <div class="field"><label><input id="productRequiresImage" type="checkbox"
+                  style="width:auto;margin-right:8px">Le client doit fournir une photo pour commander ce produit</label>
+              <p class="field-hint">Ex. : personnalisation à partir d'une photo du client.</p>
             </div>
 
             <div class="field"><label for="productDescription">Description</label><textarea id="productDescription"
@@ -1209,6 +1376,15 @@
             <p class="note">Aucun produit pour le moment.</p>
           </div>
 
+          <div style="border-top:1px solid var(--line);margin-top:28px;padding-top:20px">
+            <div class="cart-heading">
+              <h3>Commandes reçues</h3><button class="small-btn" id="refreshOrdersBtn" type="button">Actualiser</button>
+            </div>
+            <div id="adminOrdersList">
+              <p class="note">Les commandes reçues apparaîtront ici.</p>
+            </div>
+          </div>
+
         </div>
 
       </div>
@@ -1239,7 +1415,7 @@
       getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
-      getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc
+      getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Remplace ces valeurs par la configuration de ton application Web Firebase.
@@ -1273,6 +1449,7 @@
     const adminEmail = field('adminEmail');
     let adminUnlocked = false;
     let products = [];
+    let cart = [];
 
     const money = value => new Intl.NumberFormat('fr-CA', {
       style: 'currency', currency: 'CAD'
@@ -1305,12 +1482,13 @@
         empty.className = 'note';
         empty.textContent = 'La boutique se remplit bientôt. Revenez voir nos créations !';
         grid.append(empty);
+        renderCart();
         return;
       }
       products.forEach(product => {
         const card = document.createElement('article');
         card.className = 'product-card';
-        if (product.image && /^https?:\/\//i.test(product.image)) {
+        if (product.image && (/^https?:\/\//i.test(product.image) || /^data:image\//i.test(product.image))) {
           const img = document.createElement('img');
           img.src = product.image;
           img.alt = product.name || 'Produit Pixora';
@@ -1341,25 +1519,111 @@
         prices.className = 'price-line';
         const promo = discountInfo(product);
         if (promo) {
-          const old = document.createElement('span');
-          old.className = 'old-price';
-          old.textContent = money(product.price);
-          const current = document.createElement('span');
-          current.className = 'new-price';
-          current.textContent = money(promo.price);
-          const tag = document.createElement('span');
-          tag.className = 'sale-tag';
-          tag.textContent = promo.label;
+          const old = document.createElement('span'); old.className = 'old-price'; old.textContent = money(product.price);
+          const current = document.createElement('span'); current.className = 'new-price'; current.textContent = money(promo.price);
+          const tag = document.createElement('span'); tag.className = 'sale-tag'; tag.textContent = promo.label;
           prices.append(old, current, tag);
         } else {
-          const current = document.createElement('strong');
-          current.textContent = money(product.price);
-          prices.append(current);
+          const current = document.createElement('strong'); current.textContent = money(product.price); prices.append(current);
         }
-        body.append(category, title, desc, prices);
+        if (product.requiresImage) {
+          const required = document.createElement('p'); required.className = 'photo-required'; required.textContent = '📷 Photo à fournir lors de la commande';
+          body.append(category, title, desc, prices, required);
+        } else body.append(category, title, desc, prices);
+        const add = document.createElement('button');
+        add.type = 'button'; add.className = 'button'; add.textContent = 'Ajouter au panier';
+        add.addEventListener('click', () => addToCart(product.id));
+        body.append(add);
         card.append(body);
         grid.append(card);
       });
+      renderCart();
+    }
+
+    function currentPrice(product) {
+      const promo = discountInfo(product);
+      return promo ? promo.price : Number(product.price || 0);
+    }
+
+    function addToCart(productId) {
+      const product = products.find(item => item.id === productId);
+      if (!product) return;
+      const existing = cart.find(item => item.productId === productId);
+      if (existing) existing.quantity += 1;
+      else cart.push({ productId, quantity: 1, photoFile: null });
+      renderCart();
+      field('cartPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function renderCart() {
+      const list = field('cartItems');
+      list.replaceChildren();
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      field('cartCount').textContent = `(${count})`;
+      let total = 0;
+      if (!cart.length) {
+        const empty = document.createElement('p'); empty.className = 'cart-empty'; empty.textContent = 'Ton panier est vide pour le moment.'; list.append(empty);
+      }
+      cart.forEach(item => {
+        const product = products.find(p => p.id === item.productId);
+        if (!product) return;
+        const row = document.createElement('div'); row.className = 'cart-item';
+        const info = document.createElement('div');
+        const name = document.createElement('strong'); name.textContent = product.name;
+        const detail = document.createElement('p'); detail.textContent = `${money(currentPrice(product))} × ${item.quantity} = ${money(currentPrice(product) * item.quantity)}`;
+        info.append(name, detail);
+        if (product.requiresImage) {
+          const label = document.createElement('label'); label.textContent = 'Photo obligatoire pour ce produit *';
+          const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.required = true;
+          input.addEventListener('change', () => { item.photoFile = input.files?.[0] || null; });
+          info.append(label, input);
+          if (item.photoFile) { const chosen = document.createElement('p'); chosen.className = 'note'; chosen.textContent = `Photo choisie : ${item.photoFile.name}`; info.append(chosen); }
+        }
+        const controls = document.createElement('div'); controls.className = 'cart-controls';
+        const minus = document.createElement('button'); minus.type = 'button'; minus.textContent = '−'; minus.setAttribute('aria-label', 'Retirer un exemplaire');
+        minus.addEventListener('click', () => { item.quantity--; if (item.quantity <= 0) cart = cart.filter(x => x !== item); renderCart(); });
+        const qty = document.createElement('strong'); qty.textContent = String(item.quantity);
+        const plus = document.createElement('button'); plus.type = 'button'; plus.textContent = '+'; plus.setAttribute('aria-label', 'Ajouter un exemplaire');
+        plus.addEventListener('click', () => { item.quantity++; renderCart(); });
+        const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Retirer';
+        remove.addEventListener('click', () => { cart = cart.filter(x => x !== item); renderCart(); });
+        controls.append(minus, qty, plus, remove); row.append(info, controls); list.append(row);
+        total += currentPrice(product) * item.quantity;
+      });
+      field('cartTotal').textContent = money(total);
+      field('submitCartOrder').disabled = cart.length === 0;
+    }
+
+    field('clearCartBtn').addEventListener('click', () => { cart = []; renderCart(); });
+
+    // Compresse les photos dans le navigateur pour les enregistrer directement dans Firestore.
+    // Cela évite d'activer Firebase Storage et son forfait payant obligatoire.
+    async function compressImage(file, maxBytes = 420 * 1024) {
+      if (!file || !file.type.startsWith('image/')) throw new Error('Choisis un fichier image valide.');
+      if (file.size > 12 * 1024 * 1024) throw new Error('La photo originale doit faire 12 Mo ou moins.');
+      const objectUrl = URL.createObjectURL(file);
+      try {
+        const image = new Image();
+        image.src = objectUrl;
+        await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = () => reject(new Error('Impossible de lire cette image.')); });
+        let maxDimension = 1200;
+        for (let attempt = 0; attempt < 5; attempt++) {
+          const ratio = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(image.naturalWidth * ratio));
+          canvas.height = Math.max(1, Math.round(image.naturalHeight * ratio));
+          const context = canvas.getContext('2d');
+          context.fillStyle = '#ffffff'; context.fillRect(0, 0, canvas.width, canvas.height);
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          for (const quality of [0.82, 0.72, 0.62, 0.52, 0.42, 0.34]) {
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            const approximateBytes = Math.ceil((dataUrl.length - dataUrl.indexOf(',') - 1) * 0.75);
+            if (approximateBytes <= maxBytes) return dataUrl;
+          }
+          maxDimension = Math.round(maxDimension * 0.72);
+        }
+        throw new Error('Cette photo est trop volumineuse. Essaie une image plus petite.');
+      } finally { URL.revokeObjectURL(objectUrl); }
     }
 
     function showLoginMessage(text) {
@@ -1425,7 +1689,7 @@
       if (adminSection.classList.contains('hidden')) return;
       adminLogin.classList.toggle('hidden', adminUnlocked);
       adminPanel.classList.toggle('hidden', !adminUnlocked);
-      if (adminUnlocked) renderAdminProducts();
+      if (adminUnlocked) { renderAdminProducts(); loadAdminOrders(); }
     });
 
     field('adminLogout').addEventListener('click', async () => {
@@ -1454,10 +1718,26 @@
     });
 
     const productForm = field('productForm');
+    field('productImageFile').addEventListener('change', () => {
+      const file = field('productImageFile').files?.[0];
+      const preview = field('productImagePreview');
+      if (!file) { preview.classList.add('hidden'); preview.removeAttribute('src'); return; }
+      if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
+        showProductMessage('Choisis une image de 5 Mo ou moins.');
+        field('productImageFile').value = '';
+        preview.classList.add('hidden');
+        return;
+      }
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove('hidden');
+    });
     function resetProductForm() {
       productForm.reset();
       field('editProductId').value = '';
       field('discountType').value = 'none';
+      field('productRequiresImage').checked = false;
+      field('productImagePreview').classList.add('hidden');
+      field('productImagePreview').removeAttribute('src');
       field('saveProductBtn').textContent = 'Enregistrer le produit';
     }
     field('cancelEditBtn').addEventListener('click', resetProductForm);
@@ -1487,20 +1767,24 @@
         showProductMessage('La date de fin doit être après la date de début.');
         return;
       }
-      const item = {
-        name,
-        price,
-        category: field('productCategory').value,
-        image: field('productImage').value.trim(),
-        description: field('productDescription').value.trim(),
-        discountType,
-        discountValue,
-        discountStart: start,
-        discountEnd: end
-      };
       const saveButton = field('saveProductBtn');
       saveButton.disabled = true;
       try {
+        let image = field('productImage').value.trim();
+        const imageFile = field('productImageFile').files?.[0];
+        if (imageFile) image = await compressImage(imageFile, 420 * 1024);
+        const item = {
+          name,
+          price,
+          category: field('productCategory').value,
+          image,
+          description: field('productDescription').value.trim(),
+          requiresImage: field('productRequiresImage').checked,
+          discountType,
+          discountValue,
+          discountStart: start,
+          discountEnd: end
+        };
         const id = field('editProductId').value;
         if (id) {
           await updateDoc(doc(db, 'products', id), item);
@@ -1549,6 +1833,9 @@
           field('productCategory').value = product.category || 'Autre';
           field('productPrice').value = product.price ?? '';
           field('productImage').value = product.image || '';
+          field('productImageFile').value = '';
+          field('productImagePreview').classList.add('hidden');
+          field('productRequiresImage').checked = !!product.requiresImage;
           field('productDescription').value = product.description || '';
           field('discountType').value = product.discountType || 'none';
           field('discountValue').value = product.discountValue || '';
@@ -1582,7 +1869,95 @@
       if (adminUnlocked) renderAdminProducts();
     }, 60000);
 
-    // Le formulaire de commande reste une maquette : aucun envoi n'est configuré.
+    // Commande du panier : les photos sont téléversées dans Firebase Storage et la commande dans Firestore.
+    field('cartOrderForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const message = field('cartOrderMessage');
+      const submit = field('submitCartOrder');
+      if (!cart.length) { message.textContent = 'Ton panier est vide.'; message.style.display = 'block'; return; }
+      for (const item of cart) {
+        const product = products.find(p => p.id === item.productId);
+        if (product?.requiresImage && !item.photoFile) {
+          message.textContent = `Ajoute une photo pour « ${product.name} » avant de commander.`;
+          message.style.display = 'block'; return;
+        }
+      }
+      submit.disabled = true; submit.textContent = 'Envoi en cours...';
+      message.style.display = 'none';
+      try {
+        const orderItems = [];
+        for (const item of cart) {
+          const product = products.find(p => p.id === item.productId);
+          if (!product) continue;
+          let photoUrl = '';
+          let photoId = '';
+          if (product.requiresImage && item.photoFile) {
+            const imageData = await compressImage(item.photoFile, 360 * 1024);
+            const photoDoc = await addDoc(collection(db, 'orderPhotos'), { imageData, createdAt: new Date().toISOString() });
+            photoId = photoDoc.id;
+          }
+          orderItems.push({ productId: product.id, name: product.name, quantity: item.quantity, unitPrice: currentPrice(product), photoId });
+        }
+        const total = orderItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+        await addDoc(collection(db, 'orders'), {
+          customerName: field('cartCustomerName').value.trim(),
+          customerEmail: field('cartCustomerEmail').value.trim(),
+          notes: field('cartOrderNotes').value.trim(),
+          items: orderItems,
+          total,
+          createdAt: new Date().toISOString(),
+          status: 'Nouvelle'
+        });
+        cart = []; field('cartOrderForm').reset(); renderCart();
+        message.textContent = 'Merci ! Ta commande a bien été envoyée. Pixora Studio pourra la consulter dans son administration.';
+        message.style.display = 'block';
+      } catch (error) {
+        console.error(error);
+        message.textContent = error.message || 'Impossible d’envoyer la commande. Vérifie les règles Firebase Storage et Firestore.';
+        message.style.display = 'block';
+      } finally {
+        submit.disabled = cart.length === 0; submit.textContent = 'Envoyer ma commande';
+      }
+    });
+
+    async function loadAdminOrders() {
+      const list = field('adminOrdersList');
+      list.replaceChildren();
+      if (!adminUnlocked) return;
+      try {
+        const snapshot = await getDocs(collection(db, 'orders'));
+        const orders = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+        orders.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+        if (!orders.length) { const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Aucune commande reçue pour le moment.'; list.append(p); return; }
+        orders.forEach(order => {
+          const card = document.createElement('article'); card.className = 'order-admin-card';
+          const heading = document.createElement('strong'); heading.textContent = `${order.customerName || 'Client'} — ${money(order.total)}`;
+          const contact = document.createElement('p'); contact.textContent = `${order.customerEmail || ''} · ${order.createdAt ? new Date(order.createdAt).toLocaleString('fr-CA') : ''}`;
+          const items = document.createElement('p'); items.textContent = (order.items || []).map(item => `${item.name} × ${item.quantity}`).join(', ');
+          card.append(heading, contact, items);
+          if (order.notes) { const notes = document.createElement('p'); notes.textContent = `Précisions : ${order.notes}`; card.append(notes); }
+          list.append(card);
+          (order.items || []).forEach(async item => {
+            if (!item.photoId) return;
+            try {
+              const photoSnapshot = await getDoc(doc(db, 'orderPhotos', item.photoId));
+              if (!photoSnapshot.exists()) return;
+              const photo = photoSnapshot.data();
+              const link = document.createElement('a');
+              link.href = photo.imageData; link.download = `photo-${item.name || 'commande'}.jpg`; link.target = '_blank'; link.rel = 'noopener';
+              link.textContent = `Voir la photo fournie pour ${item.name}`; link.style.display = 'block';
+              card.append(link);
+            } catch (photoError) { console.error(photoError); }
+          });
+        });
+      } catch (error) {
+        console.error(error);
+        const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Impossible de charger les commandes. Vérifie les règles Firestore.'; list.append(p);
+      }
+    }
+    field('refreshOrdersBtn').addEventListener('click', loadAdminOrders);
+
+    // Le formulaire de demande personnalisée reste disponible séparément du panier.
     field('orderForm').addEventListener('submit', event => {
       event.preventDefault();
       const message = field('formMessage');
