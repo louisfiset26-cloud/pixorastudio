@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pixora Studio crée des designs numériques personnalisés : cartes, menus, publications et documents.">
+  <title>Pixora Studio — Design numérique</title>
+  <style>
+    :root {
+      --navy: #17213d;
+      --ink: #202943;
+      --muted: #66708a;
+      --purple: #7658e8;
+      --blue: #4f7df3;
+      --pale: #f4f5ff;
+      --line: #e7e9f2;
+      --white: #fff;
+      --shadow: 0 16px 45px rgba(34, 42, 83, .10);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; font-family: Arial, Helvetica, sans-serif; color: var(--ink);
+      background: #fff; line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; }
+    .container { width: min(1120px, calc(100% - 40px)); margin: auto; }
+    header {
+      position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.94);
+      backdrop-filter: blur(12px); border-bottom: 1px solid var(--line);
+    }
+    .nav { min-height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { font-weight: 900; font-size: 1.35rem; letter-spacing: -.7px; color: var(--navy); }
+    .brand span { color: var(--purple); }
+    nav { display: flex; align-items: center; gap: 25px; color: #4d5872; font-size: .94rem; }
+    nav a:hover { color: var(--purple); }
+    .menu-btn { display: none; border: 0; background: var(--pale); padding: 10px 13px; border-radius: 10px; color: var(--navy); }
+    .button {
+      display: inline-flex; justify-content: center; align-items: center; border: 0; cursor: pointer;
+      padding: 13px 20px; border-radius: 12px; font-weight: 700; color: white;
+      background: linear-gradient(110deg, var(--purple), var(--blue)); box-shadow: 0 8px 20px rgba(104, 91, 226, .22);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .button:hover { transform: translateY(-2px); box-shadow: 0 12px 25px rgba(104, 91, 226, .28); }
+    .button.secondary { background: white; color: var(--navy); border: 1px solid var(--line); box-shadow: none; }
+    .hero { padding: 86px 0 76px; background: radial-gradient(circle at 85% 15%, #e9e6ff 0, transparent 32%), linear-gradient(135deg,#f8f9ff,#f1f4ff); overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 55px; }
+    .eyebrow { display: inline-block; color: var(--purple); background: #ebe8ff; border-radius: 99px; padding: 7px 13px; font-size: .78rem; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; }
+    h1 { font-size: clamp(2.6rem, 6vw, 4.7rem); line-height: 1.04; letter-spacing: -2.8px; color: var(--navy); margin: 18px 0; }
+    h1 span { color: var(--purple); }
+    .hero p { color: var(--muted); font-size: 1.1rem; max-width: 550px; margin: 0 0 27px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-art { min-height: 340px; position: relative; display: grid; place-items: center; }
+    .art-card { background: white; border: 1px solid #ececf5; border-radius: 22px; box-shadow: var(--shadow); position: absolute; }
+    .art-main { width: 78%; padding: 22px; transform: rotate(3deg); }
+    .art-top { height: 14px; width: 45%; background: #e8e5ff; border-radius: 20px; margin-bottom: 18px; }
+    .art-title { font-weight: 900; font-size: 1.7rem; line-height: 1.1; color: var(--navy); }
+    .art-gradient { height: 105px; border-radius: 14px; margin-top: 18px; background: linear-gradient(130deg,#9b8af7,#6da7ff,#b6e7ef); }
+    .art-small { padding: 16px; width: 155px; right: 0; bottom: 24px; transform: rotate(-8deg); }
+    .art-small b { display: block; color: var(--purple); font-size: 1.2rem; }
+    .art-small span { font-size: .75rem; color: var(--muted); }
+    section { padding: 76px 0; }
+    .section-head { text-align: center; max-width: 680px; margin: 0 auto 38px; }
+    .section-head h2 { color: var(--navy); font-size: clamp(2rem,4vw,2.8rem); letter-spacing: -1px; margin: 10px 0; }
+    .section-head p { color: var(--muted); margin: 0; }
+    .services { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    .service { border: 1px solid var(--line); border-radius: 18px; padding: 24px; background: white; transition: .2s; }
+    .service:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: #d9d2ff; }
+    .service-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; background: var(--pale); font-size: 1.45rem; }
+    .service h3 { margin: 16px 0 7px; color: var(--navy); }
+    .service p { margin: 0; color: var(--muted); font-size: .94rem; }
+    .how { background: #f8f9ff; }
+    .steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .step { padding: 22px; background: white; border: 1px solid var(--line); border-radius: 17px; }
+    .number { width: 34px; height: 34px; display: grid; place-items: center; color: white; background: var(--purple); border-radius: 11px; font-weight: 800; }
+    .step h3 { margin: 14px 0 6px; color: var(--navy); }
+    .step p { margin: 0; color: var(--muted); font-size: .94rem; }
+    .order-wrap { display: grid; grid-template-columns: .8fr 1.2fr; gap: 38px; align-items: start; }
+    .order-info { background: var(--navy); color: white; padding: 30px; border-radius: 20px; }
+    .order-info h2 { font-size: 2rem; line-height: 1.15; margin: 0 0 14px; }
+    .order-info p { color: #d0d6e8; }
+    .order-info li { margin: 10px 0; color: #e5e9f5; }
+    form { border: 1px solid var(--line); border-radius: 20px; padding: 28px; box-shadow: var(--shadow); }
+    .field { margin-bottom: 17px; }
+    label { display: block; font-weight: 700; font-size: .9rem; margin-bottom: 7px; color: var(--navy); }
+    input, select, textarea { width: 100%; padding: 12px 13px; border: 1px solid #dfe2ed; border-radius: 10px; background: #fff; color: var(--ink); outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--purple); box-shadow: 0 0 0 3px #eeeaff; }
+    textarea { min-height: 115px; resize: vertical; }
+    .note { font-size: .82rem; color: var(--muted); }
+    .form-message { display: none; padding: 13px; border-radius: 10px; background: #fff5df; color: #74510c; margin-top: 14px; font-size: .9rem; }
+    .portfolio { display: grid; grid-template-columns: repeat(3,1fr); gap: 17px; }
+    .sample { border-radius: 17px; min-height: 175px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+    .sample small { font-weight: 800; letter-spacing: 1px; opacity: .7; }
+    .sample strong { font-size: 1.5rem; line-height: 1.1; max-width: 190px; }
+    .sample.one { color: #24234a; background: linear-gradient(135deg,#eeeaff,#c9c4ff); }
+    .sample.two { color: #fff; background: linear-gradient(135deg,#24365c,#667fe9); }
+    .sample.three { color: #493b32; background: linear-gradient(135deg,#f8e8d7,#e9bfa5); }
+    footer { background: #111a31; color: #d5daea; padding: 30px 0; }
+    .footer-row { display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    footer .brand { color: white; }
+    footer p { margin: 5px 0 0; font-size: .85rem; color: #aeb8d0; }
+    @media (max-width: 800px) {
+      .hero-grid, .order-wrap { grid-template-columns: 1fr; }
+      .hero { padding: 60px 0; }
+      .hero-art { min-height: 270px; }
+      .services { grid-template-columns: repeat(2,1fr); }
+      .steps { grid-template-columns: 1fr; }
+      .portfolio { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 560px) {
+      .container { width: min(100% - 28px, 1120px); }
+      .nav { min-height: 66px; flex-wrap: wrap; }
+      .menu-btn { display: block; }
+      nav { display: none; width: 100%; padding: 0 0 16px; flex-direction: column; align-items: flex-start; gap: 13px; }
+      nav.open { display: flex; }
+      .nav > .button { display: none; }
+      h1 { letter-spacing: -1.6px; }
+      section { padding: 58px 0; }
+      .services, .portfolio { grid-template-columns: 1fr; }
+      form { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="brand" href="#accueil">PIXORA<span>.</span></a>
+      <button class="menu-btn" id="menuBtn" aria-label="Ouvrir le menu">☰</button>
+      <nav id="navLinks">
+        <a href="#accueil">Accueil</a>
+        <a href="#services">Services</a>
+        <a href="#creations">Créations</a>
+        <a href="#commande">Commander</a>
+      </nav>
+      <a class="button" href="#commande">Passer une commande</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="accueil">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">PIXORA STUDIO · DESIGN NUMÉRIQUE</span>
+          <h1>Vos idées,<br><span>notre créativité.</span></h1>
+          <p>Des créations numériques personnalisées pour faire briller vos projets : cartes, menus, publications et documents.</p>
+          <div class="actions">
+            <a class="button" href="#services">Découvrir nos services</a>
+            <a class="button secondary" href="#commande">Demander une création</a>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Exemple de création graphique">
+          <div class="art-card art-main">
+            <div class="art-top"></div>
+            <div class="art-title">DESIGN<br>THAT FEELS<br>LIKE YOU.</div>
+            <div class="art-gradient"></div>
+          </div>
+          <div class="art-card art-small"><b>PIXORA</b><span>Creative studio</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">CE QUE NOUS CRÉONS</span>
+          <h2>Nos services</h2>
+          <p>Choisissez le type de création dont vous avez besoin. Chaque projet peut être adapté à vos goûts.</p>
+        </div>
+        <div class="services">
+          <article class="service"><div class="service-icon">📱</div><h3>Publications sociales</h3><p>Visuels pour Instagram, Facebook, stories et promotions.</p></article>
+          <article class="service"><div class="service-icon">🗂️</div><h3>Documents numériques</h3><p>Agendas, calendriers, fiches et documents imprimables.</p></article>
+          <article class="service"><div class="service-icon">🍽️</div><h3>Menus numériques</h3><p>Menus de restaurants, listes de prix et cartes de boissons.</p></article>
+          <article class="service"><div class="service-icon">🎉</div><h3>Cartes de fête</h3><p>Cartes d'anniversaire, de Noël, de remerciement et invitations.</p></article>
+          <article class="service"><div class="service-icon">💼</div><h3>Cartes professionnelles</h3><p>Cartes d'affaires, cartes de fidélité et cartes de rendez-vous.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="how">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">SIMPLE ET FACILE</span>
+          <h2>Comment ça fonctionne?</h2>
+          <p>De votre idée à votre création finale, en quelques étapes.</p>
+        </div>
+        <div class="steps">
+          <article class="step"><div class="number">1</div><h3>Décrivez votre idée</h3><p>Choisissez un service et expliquez ce que vous aimeriez obtenir.</p></article>
+          <article class="step"><div class="number">2</div><h3>Nous préparons le design</h3><p>Votre demande est étudiée et une création personnalisée est préparée.</p></article>
+          <article class="step"><div class="number">3</div><h3>Recevez votre création</h3><p>Le fichier numérique final vous est remis dans le format convenu.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="creations">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">INSPIRATION</span>
+          <h2>Quelques styles possibles</h2>
+          <p>Des exemples visuels temporaires. Ils pourront être remplacés par tes propres réalisations.</p>
+        </div>
+        <div class="portfolio">
+          <div class="sample one"><small>CARTE DE FÊTE</small><strong>Make a wish!</strong></div>
+          <div class="sample two"><small>CARTE PROFESSIONNELLE</small><strong>Make your mark.</strong></div>
+          <div class="sample three"><small>MENU PERSONNALISÉ</small><strong>Fresh & delicious.</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="commande">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">VOTRE PROJET COMMENCE ICI</span>
+          <h2>Demander une commande</h2>
+          <p>Remplissez les informations ci-dessous pour décrire votre projet.</p>
+        </div>
+        <div class="order-wrap">
+          <aside class="order-info">
+            <h2>Créons quelque chose qui vous ressemble.</h2>
+            <p>Expliquez-nous votre idée, le style souhaité et les détails importants.</p>
+            <ul>
+              <li>Créations personnalisées</li>
+              <li>Communication avant la réalisation</li>
+              <li>Livraison en format numérique</li>
+            </ul>
+          </aside>
+          <form id="orderForm">
+            <div class="field"><label for="customerName">Votre nom *</label><input id="customerName" name="customerName" required placeholder="Ex. : Alex Tremblay"></div>
+            <div class="field"><label for="customerEmail">Votre adresse courriel *</label><input id="customerEmail" name="customerEmail" type="email" required placeholder="exemple@courriel.com"></div>
+            <div class="field"><label for="product">Quel produit souhaitez-vous? *</label>
+              <select id="product" name="product" required>
+                <option value="">Choisir un service</option>
+                <option>Publication pour les réseaux sociaux</option>
+                <option>Document numérique</option>
+                <option>Menu numérique</option>
+                <option>Carte de fête</option>
+                <option>Carte professionnelle</option>
+                <option>Autre demande</option>
+              </select>
+            </div>
+            <div class="field"><label for="details">Décrivez votre idée *</label><textarea id="details" name="details" required placeholder="Couleurs, texte, dimensions, style souhaité..."></textarea></div>
+            <button class="button" type="submit">Préparer ma demande</button>
+            <p class="note">Aucun paiement n'est demandé sur ce site.</p>
+            <div class="form-message" id="formMessage" role="status"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <div><a class="brand" href="#accueil">PIXORA<span>.</span></a><p>Vos idées, notre créativité.</p></div>
+      <p>© <span id="year"></span> Pixora Studio. Tous droits réservés.</p>
+    </div>
+  </footer>
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+    menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => navLinks.classList.remove('open'));
+    });
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Le formulaire est visuel pour cette première étape.
+    // À l'étape suivante, nous le connecterons à un service gratuit
+    // pour que les demandes soient réellement envoyées.
+    document.getElementById('orderForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const message = document.getElementById('formMessage');
+      message.style.display = 'block';
+      message.textContent = 'Merci! Le formulaire est prêt, mais sa réception doit encore être connectée. Nous ferons cette configuration à la prochaine étape.';
+    });
+  </script>
+</body>
+</html>
