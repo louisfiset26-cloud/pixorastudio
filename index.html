@@ -120,6 +120,32 @@
       .services, .portfolio { grid-template-columns: 1fr; }
       form { padding: 20px; }
     }
+
+    .store-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+    .product-card { border:1px solid var(--line); border-radius:18px; overflow:hidden; background:#fff; box-shadow:0 8px 24px rgba(34,42,83,.06); }
+    .product-card img { width:100%; height:190px; object-fit:cover; background:var(--pale); display:block; }
+    .product-placeholder { height:190px; display:grid; place-items:center; background:linear-gradient(135deg,#eeeaff,#dce7ff); font-size:2.8rem; }
+    .product-body { padding:18px; }
+    .product-body h3 { margin:0 0 7px; color:var(--navy); }
+    .product-body p { color:var(--muted); margin:0 0 12px; font-size:.92rem; }
+    .price-line { display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin:10px 0; }
+    .old-price { color:#858ba0; text-decoration:line-through; }
+    .new-price { color:#198754; font-weight:900; font-size:1.2rem; }
+    .sale-tag { display:inline-block; background:#e7f7ed; color:#167343; border-radius:99px; padding:4px 9px; font-size:.78rem; font-weight:800; }
+    .admin-section { background:#f7f8ff; min-height:65vh; }
+    .admin-box { max-width:850px; margin:auto; background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px; box-shadow:var(--shadow); }
+    .admin-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .admin-actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:12px; }
+    .admin-actions button, .small-btn { border:1px solid var(--line); border-radius:9px; padding:8px 12px; background:#fff; color:var(--navy); cursor:pointer; font-weight:700; }
+    .admin-actions .danger { color:#b42318; }
+    .admin-item { border:1px solid var(--line); border-radius:12px; padding:14px; margin-top:12px; display:flex; justify-content:space-between; gap:12px; align-items:center; }
+    .admin-item p { margin:3px 0 0; color:var(--muted); font-size:.88rem; }
+    .admin-notice { background:#fff5df; color:#74510c; border-radius:10px; padding:12px; font-size:.88rem; margin:12px 0 18px; }
+    .hidden { display:none !important; }
+    .field-hint { color:var(--muted); font-size:.8rem; margin-top:5px; }
+    @media (max-width:800px) { .store-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:560px) { .store-grid,.admin-grid { grid-template-columns:1fr; } .admin-box { padding:18px; } .admin-item { align-items:flex-start; flex-direction:column; } }
+
   </style>
 </head>
 <body>
@@ -131,6 +157,7 @@
         <a href="#accueil">Accueil</a>
         <a href="#services">Services</a>
         <a href="#creations">Créations</a>
+        <a href="#boutique">Boutique</a>
         <a href="#commande">Commander</a>
       </nav>
       <a class="button" href="#commande">Passer une commande</a>
@@ -192,6 +219,20 @@
       </div>
     </section>
 
+
+    <section id="boutique">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">DÉCOUVREZ NOS PRODUITS</span>
+          <h2>La boutique</h2>
+          <p>Retrouvez ici les créations disponibles et les promotions en cours.</p>
+        </div>
+        <div class="store-grid" id="storeGrid">
+          <p class="note">Les produits ajoutés apparaîtront ici.</p>
+        </div>
+      </div>
+    </section>
+
     <section id="creations">
       <div class="container">
         <div class="section-head">
@@ -248,10 +289,65 @@
     </section>
   </main>
 
+
+    <section class="admin-section hidden" id="administration">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">ESPACE PRIVÉ</span>
+          <h2>Administration Pixora</h2>
+          <p>Gère les produits de ta boutique et leurs promotions.</p>
+        </div>
+        <div class="admin-box">
+          <div id="adminLogin">
+            <h3 id="loginTitle">Accéder à l'administration</h3>
+            <p class="note" id="loginDescription">Entre ton mot de passe administrateur.</p>
+            <div class="field"><label for="adminPassword">Mot de passe</label><input id="adminPassword" type="password" autocomplete="current-password" placeholder="Mot de passe"></div>
+            <button class="button" id="adminLoginBtn" type="button">Entrer</button>
+            <p class="form-message" id="adminLoginMessage" role="status"></p>
+          </div>
+
+          <div id="adminPanel" class="hidden">
+            <div class="admin-notice"><strong>À savoir :</strong> cette première version enregistre les produits dans le navigateur utilisé. Les visiteurs sur d'autres appareils ne verront pas encore les changements. Le mot de passe côté HTML n'est pas une protection sécurisée pour une vraie boutique publique. Une connexion à une base de données et à une authentification sécurisée sera nécessaire avant la mise en ligne.</div>
+            <div class="row" style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+              <h3>Ajouter ou modifier un produit</h3>
+              <button class="small-btn" id="adminLogout" type="button">Déconnexion</button>
+            </div>
+            <form id="productForm" style="box-shadow:none;margin:0;padding:18px 0;border:0">
+              <input type="hidden" id="editProductId">
+              <div class="admin-grid">
+                <div class="field"><label for="productName">Nom du produit *</label><input id="productName" required placeholder="Ex. : Planificateur hebdomadaire"></div>
+                <div class="field"><label for="productCategory">Catégorie</label><select id="productCategory"><option>Documents numériques</option><option>Publications sociales</option><option>Menus numériques</option><option>Cartes de fête</option><option>Cartes professionnelles</option><option>Autre</option></select></div>
+                <div class="field"><label for="productPrice">Prix normal ($) *</label><input id="productPrice" type="number" min="0" step="0.01" required placeholder="20.00"></div>
+                <div class="field"><label for="productImage">Lien de l'image (facultatif)</label><input id="productImage" type="url" placeholder="https://..."></div>
+              </div>
+              <div class="field"><label for="productDescription">Description</label><textarea id="productDescription" placeholder="Décris ton produit..."></textarea></div>
+              <div style="border-top:1px solid var(--line);padding-top:16px;margin-top:8px">
+                <h3>Promotion (facultatif)</h3>
+                <div class="admin-grid">
+                  <div class="field"><label for="discountType">Type de rabais</label><select id="discountType"><option value="none">Aucun rabais</option><option value="percent">Pourcentage (%)</option><option value="fixed">Montant fixe ($)</option></select></div>
+                  <div class="field"><label for="discountValue">Valeur du rabais</label><input id="discountValue" type="number" min="0" step="0.01" placeholder="Ex. : 25"></div>
+                  <div class="field"><label for="discountStart">Date et heure de début</label><input id="discountStart" type="datetime-local"></div>
+                  <div class="field"><label for="discountEnd">Date et heure de fin</label><input id="discountEnd" type="datetime-local"></div>
+                </div>
+                <p class="field-hint">Laisse les dates vides pour qu'un rabais soit actif immédiatement et sans date d'expiration. Si tu remplis une date, le rabais s'activera ou se terminera automatiquement.</p>
+              </div>
+              <div class="admin-actions">
+                <button class="button" type="submit" id="saveProductBtn">Enregistrer le produit</button>
+                <button class="small-btn" type="button" id="cancelEditBtn">Annuler</button>
+              </div>
+              <p class="form-message" id="productFormMessage" role="status"></p>
+            </form>
+            <h3>Mes produits</h3>
+            <div id="adminProductList"><p class="note">Aucun produit pour le moment.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   <footer>
     <div class="container footer-row">
       <div><a class="brand" href="#accueil">PIXORA<span>.</span></a><p>Vos idées, notre créativité.</p></div>
-      <p>© <span id="year"></span> Pixora Studio. Tous droits réservés.</p>
+      <p><a href="#administration" id="adminAccessLink">Administration</a> · © <span id="year"></span> Pixora Studio. Tous droits réservés.</p>
     </div>
   </footer>
 
@@ -264,14 +360,230 @@
     });
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // Le formulaire est visuel pour cette première étape.
-    // À l'étape suivante, nous le connecterons à un service gratuit
-    // pour que les demandes soient réellement envoyées.
+    // Boutique : stockage local temporaire, en attendant la connexion à une base de données.
+    const PRODUCTS_KEY = 'pixora_products_v1';
+    const ADMIN_PASS_KEY = 'pixora_admin_pass_v1';
+    const getProducts = () => {
+      try { return JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '[]'); }
+      catch { return []; }
+    };
+    const saveProducts = products => localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
+    const money = value => new Intl.NumberFormat('fr-CA', { style:'currency', currency:'CAD' }).format(value);
+
+    function discountInfo(product, now = new Date()) {
+      const type = product.discountType || 'none';
+      const value = Number(product.discountValue || 0);
+      if (type === 'none' || value <= 0) return null;
+      const start = product.discountStart ? new Date(product.discountStart) : null;
+      const end = product.discountEnd ? new Date(product.discountEnd) : null;
+      if (start && now < start) return null;
+      if (end && now > end) return null;
+      let discounted = Number(product.price);
+      if (type === 'percent') discounted *= (1 - Math.min(value, 100) / 100);
+      if (type === 'fixed') discounted -= value;
+      discounted = Math.max(0, discounted);
+      if (discounted >= Number(product.price)) return null;
+      return { price: discounted, label: type === 'percent' ? `-${value}%` : `-${money(value)}` };
+    }
+
+    function renderStore() {
+      const grid = document.getElementById('storeGrid');
+      const products = getProducts();
+      grid.replaceChildren();
+      if (!products.length) {
+        const empty = document.createElement('p');
+        empty.className = 'note';
+        empty.textContent = 'La boutique se remplit bientôt. Revenez voir nos créations !';
+        grid.append(empty);
+        return;
+      }
+      products.forEach(product => {
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        if (product.image && /^https?:\/\//i.test(product.image)) {
+          const img = document.createElement('img');
+          img.src = product.image; img.alt = product.name; img.loading = 'lazy';
+          img.onerror = () => { const placeholder = document.createElement('div'); placeholder.className='product-placeholder'; placeholder.textContent='🎨'; img.replaceWith(placeholder); };
+          card.append(img);
+        } else {
+          const placeholder = document.createElement('div');
+          placeholder.className = 'product-placeholder'; placeholder.textContent = '🎨';
+          card.append(placeholder);
+        }
+        const body = document.createElement('div'); body.className = 'product-body';
+        const category = document.createElement('span'); category.className='note'; category.textContent=product.category || 'Création numérique';
+        const title = document.createElement('h3'); title.textContent=product.name;
+        const desc = document.createElement('p'); desc.textContent=product.description || '';
+        const prices = document.createElement('div'); prices.className='price-line';
+        const promo = discountInfo(product);
+        if (promo) {
+          const old = document.createElement('span'); old.className='old-price'; old.textContent=money(Number(product.price));
+          const current = document.createElement('span'); current.className='new-price'; current.textContent=money(promo.price);
+          const tag = document.createElement('span'); tag.className='sale-tag'; tag.textContent=promo.label;
+          prices.append(old,current,tag);
+        } else {
+          const current = document.createElement('strong'); current.textContent=money(Number(product.price)); prices.append(current);
+        }
+        body.append(category,title,desc,prices); card.append(body); grid.append(card);
+      });
+    }
+
+    const adminSection = document.getElementById('administration');
+    const adminLogin = document.getElementById('adminLogin');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminPassword = document.getElementById('adminPassword');
+    const loginTitle = document.getElementById('loginTitle');
+    const loginDescription = document.getElementById('loginDescription');
+    let adminUnlocked = false;
+
+    document.getElementById('adminAccessLink').addEventListener('click', event => {
+      event.preventDefault();
+      adminSection.classList.remove('hidden');
+      adminSection.scrollIntoView({ behavior:'smooth' });
+      const hasPassword = !!localStorage.getItem(ADMIN_PASS_KEY);
+      loginTitle.textContent = hasPassword ? "Accéder à l'administration" : "Créer ton mot de passe administrateur";
+      loginDescription.textContent = hasPassword ? "Entre ton mot de passe administrateur." : "Choisis un mot de passe pour ouvrir cet espace sur ce navigateur.";
+      adminPassword.placeholder = hasPassword ? "Mot de passe" : "Nouveau mot de passe";
+      document.getElementById('adminLoginBtn').textContent = hasPassword ? "Entrer" : "Créer le mot de passe";
+      adminLogin.classList.remove('hidden');
+      adminPanel.classList.add('hidden');
+      adminPassword.value = '';
+    });
+
+    document.getElementById('adminLoginBtn').addEventListener('click', () => {
+      const entered = adminPassword.value;
+      const saved = localStorage.getItem(ADMIN_PASS_KEY);
+      const message = document.getElementById('adminLoginMessage');
+      message.style.display = 'block';
+      if (!entered || entered.length < 6) {
+        message.textContent = 'Utilise un mot de passe d’au moins 6 caractères.';
+        return;
+      }
+      if (!saved) {
+        localStorage.setItem(ADMIN_PASS_KEY, entered);
+      } else if (entered !== saved) {
+        message.textContent = 'Mot de passe incorrect.';
+        return;
+      }
+      adminUnlocked = true;
+      message.style.display = 'none';
+      adminLogin.classList.add('hidden');
+      adminPanel.classList.remove('hidden');
+      renderAdminProducts();
+    });
+
+    document.getElementById('adminLogout').addEventListener('click', () => {
+      adminUnlocked = false;
+      adminPanel.classList.add('hidden');
+      adminLogin.classList.remove('hidden');
+      adminPassword.value = '';
+      adminSection.scrollIntoView({ behavior:'smooth' });
+    });
+
+    const productForm = document.getElementById('productForm');
+    const field = id => document.getElementById(id);
+    function resetProductForm() {
+      productForm.reset();
+      field('editProductId').value = '';
+      field('discountType').value = 'none';
+      field('saveProductBtn').textContent = 'Enregistrer le produit';
+    }
+    document.getElementById('cancelEditBtn').addEventListener('click', resetProductForm);
+
+    productForm.addEventListener('submit', event => {
+      event.preventDefault();
+      if (!adminUnlocked) return;
+      const name = field('productName').value.trim();
+      const price = Number(field('productPrice').value);
+      const discountType = field('discountType').value;
+      const discountValue = Number(field('discountValue').value || 0);
+      if (!name || !Number.isFinite(price) || price < 0) return;
+      if (discountType !== 'none' && discountValue <= 0) {
+        showProductMessage('Entre une valeur de rabais supérieure à 0.');
+        return;
+      }
+      if (discountType === 'percent' && discountValue > 100) {
+        showProductMessage('Le pourcentage ne peut pas dépasser 100 %.');
+        return;
+      }
+      const start = field('discountStart').value;
+      const end = field('discountEnd').value;
+      if (start && end && new Date(end) <= new Date(start)) {
+        showProductMessage('La date de fin doit être après la date de début.');
+        return;
+      }
+      const products = getProducts();
+      const id = field('editProductId').value || (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()));
+      const item = {
+        id, name, price, category:field('productCategory').value,
+        image:field('productImage').value.trim(),
+        description:field('productDescription').value.trim(),
+        discountType, discountValue, discountStart:start, discountEnd:end
+      };
+      const index = products.findIndex(p => p.id === id);
+      if (index >= 0) products[index] = item; else products.push(item);
+      saveProducts(products);
+      resetProductForm();
+      showProductMessage('Produit enregistré dans ce navigateur.');
+      renderAdminProducts(); renderStore();
+    });
+
+    function showProductMessage(text) {
+      const msg = field('productFormMessage');
+      msg.textContent = text; msg.style.display='block';
+    }
+
+    function renderAdminProducts() {
+      const list = field('adminProductList');
+      list.replaceChildren();
+      const products = getProducts();
+      if (!products.length) {
+        const p=document.createElement('p'); p.className='note'; p.textContent='Aucun produit pour le moment.'; list.append(p); return;
+      }
+      products.forEach(product => {
+        const row=document.createElement('div'); row.className='admin-item';
+        const info=document.createElement('div');
+        const title=document.createElement('strong'); title.textContent=product.name;
+        const detail=document.createElement('p');
+        const promo=discountInfo(product);
+        detail.textContent = `${money(Number(product.price))}${promo ? ` · Promotion active : ${promo.label} (${money(promo.price)})` : ' · Aucun rabais actif actuellement'}`;
+        info.append(title,detail);
+        const actions=document.createElement('div'); actions.className='admin-actions';
+        const edit=document.createElement('button'); edit.type='button'; edit.textContent='Modifier';
+        edit.addEventListener('click',()=> {
+          field('editProductId').value=product.id;
+          field('productName').value=product.name;
+          field('productCategory').value=product.category || 'Autre';
+          field('productPrice').value=product.price;
+          field('productImage').value=product.image || '';
+          field('productDescription').value=product.description || '';
+          field('discountType').value=product.discountType || 'none';
+          field('discountValue').value=product.discountValue || '';
+          field('discountStart').value=product.discountStart || '';
+          field('discountEnd').value=product.discountEnd || '';
+          field('saveProductBtn').textContent='Enregistrer les modifications';
+          productForm.scrollIntoView({behavior:'smooth',block:'start'});
+        });
+        const remove=document.createElement('button'); remove.type='button'; remove.textContent='Supprimer'; remove.className='danger';
+        remove.addEventListener('click',()=> {
+          if (!confirm(`Supprimer « ${product.name} » ?`)) return;
+          saveProducts(getProducts().filter(p=>p.id!==product.id));
+          renderAdminProducts(); renderStore();
+        });
+        actions.append(edit,remove); row.append(info,actions); list.append(row);
+      });
+    }
+
+    renderStore();
+    // Actualise les promotions à chaque minute pour respecter les dates de début et de fin.
+    setInterval(() => { renderStore(); if (adminUnlocked) renderAdminProducts(); }, 60000);
+
+    // Le formulaire de commande est toujours une maquette : il doit être relié à un service d'envoi.
     document.getElementById('orderForm').addEventListener('submit', event => {
       event.preventDefault();
       const message = document.getElementById('formMessage');
       message.style.display = 'block';
-      message.textContent = 'Merci! Le formulaire est prêt, mais sa réception doit encore être connectée. Nous ferons cette configuration à la prochaine étape.';
+      message.textContent = 'Merci! Ta demande est prête, mais la réception doit encore être connectée à un service d’envoi.';
     });
   </script>
 </body>
