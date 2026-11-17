@@ -1566,6 +1566,52 @@
   </footer>
 
 
+  <script>
+    // Navigation indépendante de Firebase : les pages restent accessibles même si Firebase ne charge pas.
+    (() => {
+      const body = document.body;
+      const menuButton = document.getElementById('menuBtn');
+      const navigation = document.getElementById('navLinks');
+      const adminSection = document.getElementById('administration');
+
+      function showCurrentPage() {
+        let page = window.location.hash || '#accueil';
+        if (page === '#creations') {
+          history.replaceState(null, '', '#services');
+          page = '#services';
+        }
+
+        const searchPage = page === '#recherche';
+        const cartPage = page === '#panier';
+        const adminPage = page === '#administration';
+
+        body.classList.toggle('page-recherche', searchPage);
+        body.classList.toggle('page-panier', cartPage);
+        body.classList.toggle('page-administration', adminPage);
+        if (adminSection) adminSection.classList.toggle('hidden', !adminPage);
+
+        if (searchPage || cartPage || adminPage) {
+          window.scrollTo(0, 0);
+        } else if (page.startsWith('#')) {
+          const target = document.getElementById(page.slice(1));
+          if (target) target.scrollIntoView({ block: 'start' });
+        }
+      }
+
+      if (menuButton && navigation) {
+        menuButton.addEventListener('click', () => navigation.classList.toggle('open'));
+        navigation.querySelectorAll('a').forEach(link => {
+          link.addEventListener('click', () => navigation.classList.remove('open'));
+        });
+      }
+
+      window.addEventListener('hashchange', showCurrentPage);
+      showCurrentPage();
+      const year = document.getElementById('year');
+      if (year) year.textContent = new Date().getFullYear();
+    })();
+  </script>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
@@ -1589,36 +1635,6 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
-    const menuBtn = document.getElementById('menuBtn');
-    const navLinks = document.getElementById('navLinks');
-    menuBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
-    navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => navLinks.classList.remove('open'));
-    });
-
-    // Navigation fiable entre les différentes vues du site.
-    function updateIndependentPages() {
-      let page = window.location.hash;
-      // Le lien « Créations » mène à la présentation des services.
-      if (page === '#creations') {
-        window.location.hash = '#services';
-        return;
-      }
-      const isSearch = page === '#recherche';
-      const isCart = page === '#panier';
-      const isAdmin = page === '#administration';
-      document.body.classList.toggle('page-recherche', isSearch);
-      document.body.classList.toggle('page-panier', isCart);
-      document.body.classList.toggle('page-administration', isAdmin);
-      const admin = document.getElementById('administration');
-      if (admin) admin.classList.toggle('hidden', !isAdmin);
-      if (isSearch || isCart || isAdmin) {
-        window.scrollTo({ top: 0, behavior: 'auto' });
-      }
-    }
-    window.addEventListener('hashchange', updateIndependentPages);
-    updateIndependentPages();
 
     document.getElementById('year').textContent = new Date().getFullYear();
 
