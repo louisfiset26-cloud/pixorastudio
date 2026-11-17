@@ -881,21 +881,113 @@
     }
 
 
-    .store-tools{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin:0 0 22px}
-    .review-area{border-top:1px solid var(--line);margin-top:14px;padding-top:12px}
-    .review-area summary{cursor:pointer;font-weight:700;color:var(--navy)}
-    .review-stars{color:#e2a400;font-weight:800}
-    .review-form{box-shadow:none!important;border:0!important;padding:12px 0 0!important;margin:0!important}
-    .review-form textarea{min-height:65px}
-    .custom-options{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
-    .custom-options label{display:flex;align-items:center;gap:8px;margin:8px 0;font-weight:600}
-    .custom-options input[type=checkbox]{width:auto;margin:0}
-    .tracking-panel{margin-top:26px;padding:22px;border:1px solid var(--line);border-radius:16px}
-    .tracking-result{padding:12px;border-radius:10px;background:#f1efff;margin-top:12px}
-    .status-pill{display:inline-block;padding:4px 9px;border-radius:99px;background:#eeeaff;color:#4937a5;font-size:.82rem;font-weight:800}
-    .order-admin-card select{max-width:260px;margin-top:8px}
-    @media(max-width:800px){.store-tools{grid-template-columns:1fr 1fr}}
-    @media(max-width:560px){.store-tools{grid-template-columns:1fr}}
+    .store-tools {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 0 0 22px
+    }
+
+    .review-area {
+      border-top: 1px solid var(--line);
+      margin-top: 14px;
+      padding-top: 12px
+    }
+
+    .review-area summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--navy)
+    }
+
+    .review-stars {
+      color: #e2a400;
+      font-weight: 800
+    }
+
+    .review-form {
+      box-shadow: none !important;
+      border: 0 !important;
+      padding: 12px 0 0 !important;
+      margin: 0 !important
+    }
+
+    .review-form textarea {
+      min-height: 65px
+    }
+
+    .custom-options {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 12px 0
+    }
+
+    .custom-options label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+      font-weight: 600
+    }
+
+    .custom-options input[type=checkbox] {
+      width: auto;
+      margin: 0
+    }
+
+    .tracking-panel {
+      margin-top: 26px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 16px
+    }
+
+    .tracking-result {
+      padding: 12px;
+      border-radius: 10px;
+      background: #f1efff;
+      margin-top: 12px
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 99px;
+      background: #eeeaff;
+      color: #4937a5;
+      font-size: .82rem;
+      font-weight: 800
+    }
+
+    .order-admin-card select {
+      max-width: 260px;
+      margin-top: 8px
+    }
+
+    @media(max-width:800px) {
+      .store-tools {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(max-width:560px) {
+      .store-tools {
+        grid-template-columns: 1fr
+      }
+    }
+
+
+    /* Navigation en pages indépendantes : Recherche et Panier */
+    body.page-recherche main>section:not(#recherche),
+    body.page-panier main>section:not(#panier) {
+      display: none !important;
+    }
+
+    body:not(.page-recherche):not(.page-panier) main>#recherche,
+    body:not(.page-recherche):not(.page-panier) main>#panier {
+      display: none !important;
+    }
 
     .hidden {
       display: none !important;
@@ -1019,8 +1111,11 @@
           <h2>Produits vedettes</h2>
           <p>Une sélection de créations à découvrir.</p>
         </div>
-        <div class="store-grid" id="featuredGrid"><p class="note">Les produits vedettes apparaîtront ici.</p></div>
-        <div class="actions" style="justify-content:center;margin-top:22px"><a class="button" href="#recherche">Voir tous les produits</a></div>
+        <div class="store-grid" id="featuredGrid">
+          <p class="note">Les produits vedettes apparaîtront ici.</p>
+        </div>
+        <div class="actions" style="justify-content:center;margin-top:22px"><a class="button" href="#recherche">Voir
+            tous les produits</a></div>
       </div>
     </section>
 
@@ -1125,16 +1220,21 @@
         </div>
         <div class="store-tools">
           <input id="storeSearch" type="search" placeholder="Ex. : Noël, Instagram, cadeau...">
-          <select id="storeCategory"><option value="">Toutes les catégories</option></select>
+          <select id="storeCategory">
+            <option value="">Toutes les catégories</option>
+          </select>
           <select id="storeSort">
             <option value="default">Trier par défaut</option>
             <option value="priceAsc">Prix croissant</option>
             <option value="priceDesc">Prix décroissant</option>
             <option value="name">Nom A à Z</option>
           </select>
-          <label style="display:flex;align-items:center;gap:8px;margin:0"><input id="saleOnly" type="checkbox" style="width:auto"> En rabais seulement</label>
+          <label style="display:flex;align-items:center;gap:8px;margin:0"><input id="saleOnly" type="checkbox"
+              style="width:auto"> En rabais seulement</label>
         </div>
-        <div class="store-grid" id="storeGrid"><p class="note">Les produits ajoutés apparaîtront ici.</p></div>
+        <div class="store-grid" id="storeGrid">
+          <p class="note">Les produits ajoutés apparaîtront ici.</p>
+        </div>
       </div>
     </section>
 
@@ -1146,26 +1246,36 @@
           <p>Retrouve ici les produits que tu souhaites commander.</p>
         </div>
         <div class="cart-panel" id="cartPanel">
-          <div class="cart-heading"><h3>🛒 Mes articles</h3><button class="small-btn" type="button" id="clearCartBtn">Vider le panier</button></div>
-          <div id="cartItems"><p class="cart-empty">Ton panier est vide pour le moment.</p></div>
+          <div class="cart-heading">
+            <h3>🛒 Mes articles</h3><button class="small-btn" type="button" id="clearCartBtn">Vider le panier</button>
+          </div>
+          <div id="cartItems">
+            <p class="cart-empty">Ton panier est vide pour le moment.</p>
+          </div>
           <div class="cart-total"><span>Total</span><span id="cartTotal">0,00 $</span></div>
           <div class="cart-checkout">
             <h3>Finaliser ma commande</h3>
             <form id="cartOrderForm" style="box-shadow:none;padding:12px 0 0;border:0">
               <div class="admin-grid">
-                <div class="field"><label for="cartCustomerName">Votre nom *</label><input id="cartCustomerName" required autocomplete="name"></div>
-                <div class="field"><label for="cartCustomerEmail">Votre adresse courriel *</label><input id="cartCustomerEmail" type="email" required autocomplete="email"></div>
+                <div class="field"><label for="cartCustomerName">Votre nom *</label><input id="cartCustomerName"
+                    required autocomplete="name"></div>
+                <div class="field"><label for="cartCustomerEmail">Votre adresse courriel *</label><input
+                    id="cartCustomerEmail" type="email" required autocomplete="email"></div>
               </div>
-              <div class="field"><label for="cartOrderNotes">Précisions (facultatif)</label><textarea id="cartOrderNotes" placeholder="Instructions ou détails supplémentaires..."></textarea></div>
-              <p class="note">Si un produit exige une photo, tu pourras l'ajouter directement sous ce produit dans ton panier.</p>
+              <div class="field"><label for="cartOrderNotes">Précisions (facultatif)</label><textarea
+                  id="cartOrderNotes" placeholder="Instructions ou détails supplémentaires..."></textarea></div>
+              <p class="note">Si un produit exige une photo, tu pourras l'ajouter directement sous ce produit dans ton
+                panier.</p>
               <button class="button" id="submitCartOrder" type="submit">Envoyer ma commande</button>
               <p class="form-message" id="cartOrderMessage" role="status"></p>
             </form>
           </div>
         </div>
         <div class="tracking-panel">
-          <h3>Suivre une commande</h3><p class="note">Entre le code de suivi reçu après ta commande.</p>
-          <form id="trackOrderForm" style="box-shadow:none;border:0;padding:8px 0 0;display:flex;gap:10px;flex-wrap:wrap">
+          <h3>Suivre une commande</h3>
+          <p class="note">Entre le code de suivi reçu après ta commande.</p>
+          <form id="trackOrderForm"
+            style="box-shadow:none;border:0;padding:8px 0 0;display:flex;gap:10px;flex-wrap:wrap">
             <input id="trackingCodeInput" placeholder="Code de suivi" required style="flex:1;min-width:180px">
             <button class="button" type="submit">Voir le statut</button>
           </form>
@@ -1334,17 +1444,26 @@
                   alt="Aperçu de l'image du produit"></div>
             </div>
             <div class="admin-grid">
-              <div class="field"><label for="productKeywords">Mots-clés de recherche</label><input id="productKeywords" placeholder="Noël, cadeau, Instagram, anniversaire"><p class="field-hint">Sépare les mots-clés par des virgules. Ils aideront les clients à trouver ce produit.</p></div>
-              <div class="field" style="display:flex;align-items:center;padding-top:22px"><label style="display:flex;align-items:center;gap:9px"><input id="productFeatured" type="checkbox" style="width:auto"> Afficher dans les produits vedettes de l'accueil</label></div>
+              <div class="field"><label for="productKeywords">Mots-clés de recherche</label><input id="productKeywords"
+                  placeholder="Noël, cadeau, Instagram, anniversaire">
+                <p class="field-hint">Sépare les mots-clés par des virgules. Ils aideront les clients à trouver ce
+                  produit.</p>
+              </div>
+              <div class="field" style="display:flex;align-items:center;padding-top:22px"><label
+                  style="display:flex;align-items:center;gap:9px"><input id="productFeatured" type="checkbox"
+                    style="width:auto"> Afficher dans les produits vedettes de l'accueil</label></div>
             </div>
             <div class="custom-options">
               <strong>Options de personnalisation à afficher au client</strong>
-              <p class="field-hint">Les options sont toujours les mêmes. Coche seulement celles qui s'appliquent à ce produit.</p>
+              <p class="field-hint">Les options sont toujours les mêmes. Coche seulement celles qui s'appliquent à ce
+                produit.</p>
               <label><input type="checkbox" class="product-custom-option" value="color"> Couleur souhaitée</label>
               <label><input type="checkbox" class="product-custom-option" value="text"> Texte à inscrire</label>
               <label><input type="checkbox" class="product-custom-option" value="format"> Format</label>
-              <label><input type="checkbox" class="product-custom-option" value="photo"> Photo à fournir (obligatoire)</label>
-              <label><input type="checkbox" class="product-custom-option" value="instructions"> Instructions particulières</label>
+              <label><input type="checkbox" class="product-custom-option" value="photo"> Photo à fournir
+                (obligatoire)</label>
+              <label><input type="checkbox" class="product-custom-option" value="instructions"> Instructions
+                particulières</label>
             </div>
 
             <div class="field"><label for="productDescription">Description</label><textarea id="productDescription"
@@ -1398,7 +1517,9 @@
 
           <div style="border-top:1px solid var(--line);margin-top:28px;padding-top:20px">
             <h3>Avis des clients</h3>
-            <div id="adminReviewsList"><p class="note">Les avis publiés apparaîtront ici.</p></div>
+            <div id="adminReviewsList">
+              <p class="note">Les avis publiés apparaîtront ici.</p>
+            </div>
           </div>
 
           <div style="border-top:1px solid var(--line);margin-top:28px;padding-top:20px">
@@ -1464,6 +1585,19 @@
     navLinks.querySelectorAll('a').forEach(link => {
       link.addEventListener('click', () => navLinks.classList.remove('open'));
     });
+
+    // Recherche et Panier sont des pages distinctes, et non des sections qui défilent.
+    function updateIndependentPages() {
+      const page = window.location.hash;
+      document.body.classList.toggle('page-recherche', page === '#recherche');
+      document.body.classList.toggle('page-panier', page === '#panier');
+      if (page === '#recherche' || page === '#panier') {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
+    }
+    window.addEventListener('hashchange', updateIndependentPages);
+    updateIndependentPages();
+
     document.getElementById('year').textContent = new Date().getFullYear();
 
     const field = id => document.getElementById(id);
@@ -1511,9 +1645,9 @@
         return matchesText && matchesCategory && matchesSale;
       });
       const sort = field('storeSort')?.value || 'default';
-      if (sort === 'priceAsc') visible.sort((a,b) => currentPrice(a)-currentPrice(b));
-      if (sort === 'priceDesc') visible.sort((a,b) => currentPrice(b)-currentPrice(a));
-      if (sort === 'name') visible.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'fr'));
+      if (sort === 'priceAsc') visible.sort((a, b) => currentPrice(a) - currentPrice(b));
+      if (sort === 'priceDesc') visible.sort((a, b) => currentPrice(b) - currentPrice(a));
+      if (sort === 'name') visible.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'fr'));
 
       if (!products.length || !visible.length) {
         const empty = document.createElement('p');
@@ -1544,26 +1678,26 @@
         if (promo) {
           const old = document.createElement('span'); old.className = 'old-price'; old.textContent = money(product.price);
           const current = document.createElement('span'); current.className = 'new-price'; current.textContent = money(promo.price);
-          const tag = document.createElement('span'); tag.className = 'sale-tag'; tag.textContent = promo.label; prices.append(old,current,tag);
+          const tag = document.createElement('span'); tag.className = 'sale-tag'; tag.textContent = promo.label; prices.append(old, current, tag);
         } else { const current = document.createElement('strong'); current.textContent = money(product.price); prices.append(current); }
         const add = document.createElement('button'); add.type = 'button'; add.className = 'button'; add.textContent = 'Ajouter au panier';
         add.addEventListener('click', () => addToCart(product.id));
-        body.append(category,title,desc,prices);
+        body.append(category, title, desc, prices);
         if ((product.customOptions || []).includes('photo') || product.requiresImage) {
           const req = document.createElement('p'); req.className = 'photo-required'; req.textContent = '📷 Photo à fournir lors de la commande'; body.append(req);
         }
         body.append(add);
 
         const productReviews = reviews.filter(review => review.productId === product.id);
-        const avg = productReviews.length ? productReviews.reduce((sum,r)=>sum+Number(r.rating||0),0)/productReviews.length : 0;
+        const avg = productReviews.length ? productReviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / productReviews.length : 0;
         const reviewArea = document.createElement('details'); reviewArea.className = 'review-area';
         const summary = document.createElement('summary');
         summary.textContent = productReviews.length ? `Avis (${productReviews.length}) · ${avg.toFixed(1)}/5 ★` : 'Écrire le premier avis';
         reviewArea.append(summary);
         if (productReviews.length) {
-          productReviews.slice(0,4).forEach(review => {
+          productReviews.slice(0, 4).forEach(review => {
             const line = document.createElement('p');
-            const stars = document.createElement('span'); stars.className = 'review-stars'; stars.textContent = '★'.repeat(Number(review.rating||0)) + '☆'.repeat(5-Number(review.rating||0));
+            const stars = document.createElement('span'); stars.className = 'review-stars'; stars.textContent = '★'.repeat(Number(review.rating || 0)) + '☆'.repeat(5 - Number(review.rating || 0));
             line.append(stars, document.createTextNode(` ${review.name || 'Client'} : ${review.comment || ''}`)); reviewArea.append(line);
           });
         }
@@ -1573,13 +1707,13 @@
         rating.innerHTML = '<option value="">Note sur 5 étoiles</option><option value="5">5 étoiles</option><option value="4">4 étoiles</option><option value="3">3 étoiles</option><option value="2">2 étoiles</option><option value="1">1 étoile</option>';
         const comment = document.createElement('textarea'); comment.placeholder = 'Ton commentaire'; comment.required = true; comment.maxLength = 500;
         const send = document.createElement('button'); send.type = 'submit'; send.className = 'small-btn'; send.textContent = 'Envoyer mon avis';
-        form.append(name,rating,comment,send);
+        form.append(name, rating, comment, send);
         form.addEventListener('submit', async event => {
           event.preventDefault(); send.disabled = true;
           try {
-            await addDoc(collection(db,'reviews'), { productId: product.id, name: name.value.trim(), rating: Number(rating.value), comment: comment.value.trim(), createdAt: new Date().toISOString() });
-            form.reset(); summary.textContent = 'Merci pour ton avis !'; 
-          } catch(error) { console.error(error); alert('Impossible d’envoyer cet avis. Vérifie les règles Firestore.'); }
+            await addDoc(collection(db, 'reviews'), { productId: product.id, name: name.value.trim(), rating: Number(rating.value), comment: comment.value.trim(), createdAt: new Date().toISOString() });
+            form.reset(); summary.textContent = 'Merci pour ton avis !';
+          } catch (error) { console.error(error); alert('Impossible d’envoyer cet avis. Vérifie les règles Firestore.'); }
           finally { send.disabled = false; }
         });
         reviewArea.append(form); body.append(reviewArea);
@@ -1609,20 +1743,20 @@
         const desc = document.createElement('p'); desc.textContent = product.description || '';
         const price = document.createElement('strong'); const promo = discountInfo(product); price.textContent = money(promo ? promo.price : product.price);
         const add = document.createElement('button'); add.type = 'button'; add.className = 'button'; add.textContent = 'Ajouter au panier'; add.addEventListener('click', () => addToCart(product.id));
-        body.append(category,title,desc,price,add); card.append(body); grid.append(card);
+        body.append(category, title, desc, price, add); card.append(body); grid.append(card);
       });
     }
 
-    ['storeSearch','storeCategory','storeSort','saleOnly'].forEach(id => {
+    ['storeSearch', 'storeCategory', 'storeSort', 'saleOnly'].forEach(id => {
       field(id).addEventListener(id === 'saleOnly' ? 'change' : 'input', renderStore);
     });
 
     function refreshCategoryFilter() {
       const select = field('storeCategory');
       const current = select.value;
-      const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
-      select.replaceChildren(new Option('Toutes les catégories',''));
-      categories.forEach(category => select.add(new Option(category,category)));
+      const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+      select.replaceChildren(new Option('Toutes les catégories', ''));
+      categories.forEach(category => select.add(new Option(category, category)));
       select.value = categories.includes(current) ? current : '';
     }
 
@@ -1649,58 +1783,58 @@
 
     function renderCart() {
       const list = field('cartItems'); list.replaceChildren();
-      const count = cart.reduce((sum,item)=>sum+item.quantity,0);
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
       field('cartCount').textContent = `(${count})`;
       if (field('navCartCount')) field('navCartCount').textContent = `(${count})`;
       let total = 0;
-      if (!cart.length) { const empty=document.createElement('p'); empty.className='cart-empty'; empty.textContent='Ton panier est vide pour le moment.'; list.append(empty); }
+      if (!cart.length) { const empty = document.createElement('p'); empty.className = 'cart-empty'; empty.textContent = 'Ton panier est vide pour le moment.'; list.append(empty); }
       cart.forEach(item => {
-        const product = products.find(p=>p.id===item.productId); if(!product) return;
+        const product = products.find(p => p.id === item.productId); if (!product) return;
         if (!item.customizations) item.customizations = {};
-        const row=document.createElement('div'); row.className='cart-item';
-        const info=document.createElement('div');
-        const name=document.createElement('strong'); name.textContent=product.name;
-        const detail=document.createElement('p'); detail.textContent=`${money(currentPrice(product))} × ${item.quantity} = ${money(currentPrice(product)*item.quantity)}`;
-        info.append(name,detail);
+        const row = document.createElement('div'); row.className = 'cart-item';
+        const info = document.createElement('div');
+        const name = document.createElement('strong'); name.textContent = product.name;
+        const detail = document.createElement('p'); detail.textContent = `${money(currentPrice(product))} × ${item.quantity} = ${money(currentPrice(product) * item.quantity)}`;
+        info.append(name, detail);
         productOptions(product).forEach(key => {
-          const def=customizationDefinitions[key]; if(!def) return;
-          const wrap=document.createElement('div'); wrap.className='field'; wrap.style.marginTop='10px';
-          const label=document.createElement('label'); label.textContent=def.label + (key==='photo'?' *':''); wrap.append(label);
+          const def = customizationDefinitions[key]; if (!def) return;
+          const wrap = document.createElement('div'); wrap.className = 'field'; wrap.style.marginTop = '10px';
+          const label = document.createElement('label'); label.textContent = def.label + (key === 'photo' ? ' *' : ''); wrap.append(label);
           let control;
-          if(def.type==='textarea'){ control=document.createElement('textarea'); control.placeholder=def.placeholder; control.value=item.customizations[key]||''; }
-          else if(def.type==='select'){
-            control=document.createElement('select'); control.add(new Option('Choisir...',''));
-            def.options.forEach(option=>control.add(new Option(option,option)));
-            control.value=item.customizations[key]||'';
-          } else if(def.type==='file'){
-            control=document.createElement('input'); control.type='file'; control.accept='image/*'; control.required=true;
-            control.addEventListener('change',()=>{item.photoFile=control.files?.[0]||null;});
-            if(item.photoFile){const chosen=document.createElement('p');chosen.className='note';chosen.textContent=`Photo choisie : ${item.photoFile.name}`;wrap.append(chosen);}
-          } else { control=document.createElement('input'); control.type='text'; control.placeholder=def.placeholder; control.value=item.customizations[key]||''; }
-          if(key!=='photo') control.addEventListener('input',()=>{item.customizations[key]=control.value;});
-          if(key==='format') control.addEventListener('change',()=>{item.customizations[key]=control.value;});
+          if (def.type === 'textarea') { control = document.createElement('textarea'); control.placeholder = def.placeholder; control.value = item.customizations[key] || ''; }
+          else if (def.type === 'select') {
+            control = document.createElement('select'); control.add(new Option('Choisir...', ''));
+            def.options.forEach(option => control.add(new Option(option, option)));
+            control.value = item.customizations[key] || '';
+          } else if (def.type === 'file') {
+            control = document.createElement('input'); control.type = 'file'; control.accept = 'image/*'; control.required = true;
+            control.addEventListener('change', () => { item.photoFile = control.files?.[0] || null; });
+            if (item.photoFile) { const chosen = document.createElement('p'); chosen.className = 'note'; chosen.textContent = `Photo choisie : ${item.photoFile.name}`; wrap.append(chosen); }
+          } else { control = document.createElement('input'); control.type = 'text'; control.placeholder = def.placeholder; control.value = item.customizations[key] || ''; }
+          if (key !== 'photo') control.addEventListener('input', () => { item.customizations[key] = control.value; });
+          if (key === 'format') control.addEventListener('change', () => { item.customizations[key] = control.value; });
           wrap.append(control); info.append(wrap);
         });
-        const controls=document.createElement('div'); controls.className='cart-controls';
-        const minus=document.createElement('button'); minus.type='button'; minus.textContent='−'; minus.addEventListener('click',()=>{item.quantity--;if(item.quantity<=0)cart=cart.filter(x=>x!==item);renderCart();});
-        const qty=document.createElement('strong'); qty.textContent=String(item.quantity);
-        const plus=document.createElement('button'); plus.type='button'; plus.textContent='+'; plus.addEventListener('click',()=>{item.quantity++;renderCart();});
-        const remove=document.createElement('button'); remove.type='button'; remove.textContent='Retirer'; remove.addEventListener('click',()=>{cart=cart.filter(x=>x!==item);renderCart();});
-        controls.append(minus,qty,plus,remove); row.append(info,controls); list.append(row);
-        total+=currentPrice(product)*item.quantity;
+        const controls = document.createElement('div'); controls.className = 'cart-controls';
+        const minus = document.createElement('button'); minus.type = 'button'; minus.textContent = '−'; minus.addEventListener('click', () => { item.quantity--; if (item.quantity <= 0) cart = cart.filter(x => x !== item); renderCart(); });
+        const qty = document.createElement('strong'); qty.textContent = String(item.quantity);
+        const plus = document.createElement('button'); plus.type = 'button'; plus.textContent = '+'; plus.addEventListener('click', () => { item.quantity++; renderCart(); });
+        const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Retirer'; remove.addEventListener('click', () => { cart = cart.filter(x => x !== item); renderCart(); });
+        controls.append(minus, qty, plus, remove); row.append(info, controls); list.append(row);
+        total += currentPrice(product) * item.quantity;
       });
-      field('cartTotal').textContent=money(total);
-      field('submitCartOrder').disabled=cart.length===0;
+      field('cartTotal').textContent = money(total);
+      field('submitCartOrder').disabled = cart.length === 0;
     }
 
     function makeTrackingCode() {
       const bytes = new Uint8Array(8); crypto.getRandomValues(bytes);
-      return [...bytes].map(value=>value.toString(16).padStart(2,'0')).join('').toUpperCase();
+      return [...bytes].map(value => value.toString(16).padStart(2, '0')).join('').toUpperCase();
     }
 
     async function updateOrderStatus(order, status) {
-      await updateDoc(doc(db,'orders',order.id), { status });
-      if(order.trackingCode) await updateDoc(doc(db,'tracking',order.trackingCode), { status });
+      await updateDoc(doc(db, 'orders', order.id), { status });
+      if (order.trackingCode) await updateDoc(doc(db, 'tracking', order.trackingCode), { status });
       order.status = status;
     }
 
@@ -1992,24 +2126,24 @@
 
 
     function renderAdminReviews() {
-      const list=field('adminReviewsList');
-      if(!list)return;
+      const list = field('adminReviewsList');
+      if (!list) return;
       list.replaceChildren();
-      if(!reviews.length){const p=document.createElement('p');p.className='note';p.textContent='Aucun avis pour le moment.';list.append(p);return;}
-      reviews.slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).forEach(review=>{
-        const row=document.createElement('div');row.className='admin-item';
-        const info=document.createElement('div');
-        const product=products.find(p=>p.id===review.productId);
-        const title=document.createElement('strong');title.textContent=`${product?.name||'Produit'} · ${review.name||'Client'} · ${review.rating||0}/5`;
-        const comment=document.createElement('p');comment.textContent=review.comment||'';
-        info.append(title,comment);
-        const remove=document.createElement('button');remove.type='button';remove.className='danger';remove.textContent='Supprimer l’avis';
-        remove.addEventListener('click',async()=>{
-          if(!confirm('Supprimer cet avis ?'))return;
-          try{await deleteDoc(doc(db,'reviews',review.id));}
-          catch(error){console.error(error);alert('Impossible de supprimer cet avis.');}
+      if (!reviews.length) { const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Aucun avis pour le moment.'; list.append(p); return; }
+      reviews.slice().sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))).forEach(review => {
+        const row = document.createElement('div'); row.className = 'admin-item';
+        const info = document.createElement('div');
+        const product = products.find(p => p.id === review.productId);
+        const title = document.createElement('strong'); title.textContent = `${product?.name || 'Produit'} · ${review.name || 'Client'} · ${review.rating || 0}/5`;
+        const comment = document.createElement('p'); comment.textContent = review.comment || '';
+        info.append(title, comment);
+        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'danger'; remove.textContent = 'Supprimer l’avis';
+        remove.addEventListener('click', async () => {
+          if (!confirm('Supprimer cet avis ?')) return;
+          try { await deleteDoc(doc(db, 'reviews', review.id)); }
+          catch (error) { console.error(error); alert('Impossible de supprimer cet avis.'); }
         });
-        row.append(info,remove);list.append(row);
+        row.append(info, remove); list.append(row);
       });
     }
 
@@ -2022,113 +2156,113 @@
     // Commande du panier : les photos compressées et la commande sont enregistrées dans Firestore.
     field('cartOrderForm').addEventListener('submit', async event => {
       event.preventDefault();
-      const message=field('cartOrderMessage'), submit=field('submitCartOrder');
-      if(!cart.length){message.textContent='Ton panier est vide.';message.style.display='block';return;}
-      for(const item of cart){
-        const product=products.find(p=>p.id===item.productId);
-        if(productOptions(product||{}).includes('photo')&&!item.photoFile){
-          message.textContent=`Ajoute une photo pour « ${product.name} » avant de commander.`;message.style.display='block';return;
+      const message = field('cartOrderMessage'), submit = field('submitCartOrder');
+      if (!cart.length) { message.textContent = 'Ton panier est vide.'; message.style.display = 'block'; return; }
+      for (const item of cart) {
+        const product = products.find(p => p.id === item.productId);
+        if (productOptions(product || {}).includes('photo') && !item.photoFile) {
+          message.textContent = `Ajoute une photo pour « ${product.name} » avant de commander.`; message.style.display = 'block'; return;
         }
       }
-      submit.disabled=true;submit.textContent='Envoi en cours...';message.style.display='none';
-      try{
-        const orderItems=[];
-        for(const item of cart){
-          const product=products.find(p=>p.id===item.productId);if(!product)continue;
-          let photoId='';
-          if(productOptions(product).includes('photo')&&item.photoFile){
-            const imageData=await compressImage(item.photoFile,360*1024);
-            const photoDoc=await addDoc(collection(db,'orderPhotos'),{imageData,createdAt:new Date().toISOString()});
-            photoId=photoDoc.id;
+      submit.disabled = true; submit.textContent = 'Envoi en cours...'; message.style.display = 'none';
+      try {
+        const orderItems = [];
+        for (const item of cart) {
+          const product = products.find(p => p.id === item.productId); if (!product) continue;
+          let photoId = '';
+          if (productOptions(product).includes('photo') && item.photoFile) {
+            const imageData = await compressImage(item.photoFile, 360 * 1024);
+            const photoDoc = await addDoc(collection(db, 'orderPhotos'), { imageData, createdAt: new Date().toISOString() });
+            photoId = photoDoc.id;
           }
           orderItems.push({
-            productId:product.id,name:product.name,quantity:item.quantity,
-            unitPrice:currentPrice(product),photoId,
-            customizations:item.customizations||{}
+            productId: product.id, name: product.name, quantity: item.quantity,
+            unitPrice: currentPrice(product), photoId,
+            customizations: item.customizations || {}
           });
         }
-        const total=orderItems.reduce((sum,item)=>sum+item.unitPrice*item.quantity,0);
-        const trackingCode=makeTrackingCode();
-        const createdAt=new Date().toISOString();
-        const orderRef=await addDoc(collection(db,'orders'),{
-          customerName:field('cartCustomerName').value.trim(),
-          customerEmail:field('cartCustomerEmail').value.trim(),
-          notes:field('cartOrderNotes').value.trim(),items:orderItems,total,createdAt,
-          status:'Commande reçue',trackingCode
+        const total = orderItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
+        const trackingCode = makeTrackingCode();
+        const createdAt = new Date().toISOString();
+        const orderRef = await addDoc(collection(db, 'orders'), {
+          customerName: field('cartCustomerName').value.trim(),
+          customerEmail: field('cartCustomerEmail').value.trim(),
+          notes: field('cartOrderNotes').value.trim(), items: orderItems, total, createdAt,
+          status: 'Commande reçue', trackingCode
         });
-        await setDoc(doc(db,'tracking',trackingCode),{status:'Commande reçue',orderId:orderRef.id,createdAt});
-        cart=[];field('cartOrderForm').reset();renderCart();
-        message.textContent=`Merci ! Ta commande est envoyée. Ton code de suivi est : ${trackingCode}. Garde-le pour consulter le statut de ta commande.`;
-        message.style.display='block';
-      }catch(error){
+        await setDoc(doc(db, 'tracking', trackingCode), { status: 'Commande reçue', orderId: orderRef.id, createdAt });
+        cart = []; field('cartOrderForm').reset(); renderCart();
+        message.textContent = `Merci ! Ta commande est envoyée. Ton code de suivi est : ${trackingCode}. Garde-le pour consulter le statut de ta commande.`;
+        message.style.display = 'block';
+      } catch (error) {
         console.error(error);
-        message.textContent=error.message||'Impossible d’envoyer la commande. Vérifie les règles Firestore.';
-        message.style.display='block';
-      }finally{submit.disabled=cart.length===0;submit.textContent='Envoyer ma commande';}
+        message.textContent = error.message || 'Impossible d’envoyer la commande. Vérifie les règles Firestore.';
+        message.style.display = 'block';
+      } finally { submit.disabled = cart.length === 0; submit.textContent = 'Envoyer ma commande'; }
     });
 
     field('trackOrderForm').addEventListener('submit', async event => {
       event.preventDefault();
-      const result=field('trackingResult');
-      result.classList.remove('hidden');result.textContent='Recherche du statut...';
-      const code=field('trackingCodeInput').value.trim().toUpperCase();
-      try{
-        const snapshot=await getDoc(doc(db,'tracking',code));
-        if(!snapshot.exists()){result.textContent='Code de suivi introuvable. Vérifie le code et réessaie.';return;}
-        const data=snapshot.data();
-        result.textContent=`Statut actuel : ${data.status || 'Commande reçue'}`;
-      }catch(error){console.error(error);result.textContent='Impossible de consulter le suivi. Réessaie plus tard.';}
+      const result = field('trackingResult');
+      result.classList.remove('hidden'); result.textContent = 'Recherche du statut...';
+      const code = field('trackingCodeInput').value.trim().toUpperCase();
+      try {
+        const snapshot = await getDoc(doc(db, 'tracking', code));
+        if (!snapshot.exists()) { result.textContent = 'Code de suivi introuvable. Vérifie le code et réessaie.'; return; }
+        const data = snapshot.data();
+        result.textContent = `Statut actuel : ${data.status || 'Commande reçue'}`;
+      } catch (error) { console.error(error); result.textContent = 'Impossible de consulter le suivi. Réessaie plus tard.'; }
     });
 
     async function loadAdminOrders() {
-      const list=field('adminOrdersList');list.replaceChildren();
-      if(!adminUnlocked)return;
-      try{
-        const snapshot=await getDocs(collection(db,'orders'));
-        const orders=snapshot.docs.map(item=>({id:item.id,...item.data()}));
-        orders.sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
-        if(!orders.length){const p=document.createElement('p');p.className='note';p.textContent='Aucune commande reçue pour le moment.';list.append(p);return;}
-        for(const order of orders){
+      const list = field('adminOrdersList'); list.replaceChildren();
+      if (!adminUnlocked) return;
+      try {
+        const snapshot = await getDocs(collection(db, 'orders'));
+        const orders = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+        orders.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+        if (!orders.length) { const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Aucune commande reçue pour le moment.'; list.append(p); return; }
+        for (const order of orders) {
           // Dès que l'administration affiche une nouvelle commande, elle passe automatiquement à « analysée ».
-          if((order.status||'Commande reçue')==='Commande reçue'){
-            try{await updateOrderStatus(order,'Commande analysée');}catch(statusError){console.error(statusError);}
+          if ((order.status || 'Commande reçue') === 'Commande reçue') {
+            try { await updateOrderStatus(order, 'Commande analysée'); } catch (statusError) { console.error(statusError); }
           }
-          const card=document.createElement('article');card.className='order-admin-card';
-          const heading=document.createElement('strong');heading.textContent=`${order.customerName||'Client'} — ${money(order.total)}`;
-          const contact=document.createElement('p');contact.textContent=`${order.customerEmail||''} · ${order.createdAt?new Date(order.createdAt).toLocaleString('fr-CA'):''}`;
-          const code=document.createElement('p');code.textContent=`Code de suivi : ${order.trackingCode||'Ancienne commande'}`;
-          const items=document.createElement('div');
-          (order.items||[]).forEach(item=>{
-            const line=document.createElement('p');
-            const custom=Object.entries(item.customizations||{}).filter(([k,v])=>v).map(([k,v])=>`${customizationDefinitions[k]?.label||k}: ${v}`).join(' · ');
-            line.textContent=`${item.name} × ${item.quantity}${custom?' — '+custom:''}`;
+          const card = document.createElement('article'); card.className = 'order-admin-card';
+          const heading = document.createElement('strong'); heading.textContent = `${order.customerName || 'Client'} — ${money(order.total)}`;
+          const contact = document.createElement('p'); contact.textContent = `${order.customerEmail || ''} · ${order.createdAt ? new Date(order.createdAt).toLocaleString('fr-CA') : ''}`;
+          const code = document.createElement('p'); code.textContent = `Code de suivi : ${order.trackingCode || 'Ancienne commande'}`;
+          const items = document.createElement('div');
+          (order.items || []).forEach(item => {
+            const line = document.createElement('p');
+            const custom = Object.entries(item.customizations || {}).filter(([k, v]) => v).map(([k, v]) => `${customizationDefinitions[k]?.label || k}: ${v}`).join(' · ');
+            line.textContent = `${item.name} × ${item.quantity}${custom ? ' — ' + custom : ''}`;
             items.append(line);
-            if(item.photoId){
-              getDoc(doc(db,'orderPhotos',item.photoId)).then(photoSnapshot=>{
-                if(!photoSnapshot.exists())return;
-                const link=document.createElement('a');link.href=photoSnapshot.data().imageData;
-                link.download=`photo-${item.name||'commande'}.jpg`;link.target='_blank';link.rel='noopener';
-                link.textContent=`Voir la photo fournie pour ${item.name}`;link.style.display='block';card.append(link);
+            if (item.photoId) {
+              getDoc(doc(db, 'orderPhotos', item.photoId)).then(photoSnapshot => {
+                if (!photoSnapshot.exists()) return;
+                const link = document.createElement('a'); link.href = photoSnapshot.data().imageData;
+                link.download = `photo-${item.name || 'commande'}.jpg`; link.target = '_blank'; link.rel = 'noopener';
+                link.textContent = `Voir la photo fournie pour ${item.name}`; link.style.display = 'block'; card.append(link);
               }).catch(console.error);
             }
           });
-          card.append(heading,contact,code,items);
-          if(order.notes){const notes=document.createElement('p');notes.textContent=`Précisions : ${order.notes}`;card.append(notes);}
-          const statusLabel=document.createElement('label');statusLabel.textContent='Statut de la commande';
-          const status=document.createElement('select');
-          ['Commande reçue','Commande analysée','En fabrication','Terminée'].forEach(value=>status.add(new Option(value,value)));
-          status.value=order.status||'Commande reçue';
-          status.addEventListener('change',async()=>{
-            status.disabled=true;
-            try{await updateOrderStatus(order,status.value);}
-            catch(error){console.error(error);alert('Impossible de modifier le statut. Vérifie les règles Firestore.');status.value=order.status||'Commande analysée';}
-            finally{status.disabled=false;}
+          card.append(heading, contact, code, items);
+          if (order.notes) { const notes = document.createElement('p'); notes.textContent = `Précisions : ${order.notes}`; card.append(notes); }
+          const statusLabel = document.createElement('label'); statusLabel.textContent = 'Statut de la commande';
+          const status = document.createElement('select');
+          ['Commande reçue', 'Commande analysée', 'En fabrication', 'Terminée'].forEach(value => status.add(new Option(value, value)));
+          status.value = order.status || 'Commande reçue';
+          status.addEventListener('change', async () => {
+            status.disabled = true;
+            try { await updateOrderStatus(order, status.value); }
+            catch (error) { console.error(error); alert('Impossible de modifier le statut. Vérifie les règles Firestore.'); status.value = order.status || 'Commande analysée'; }
+            finally { status.disabled = false; }
           });
-          card.append(statusLabel,status);list.append(card);
+          card.append(statusLabel, status); list.append(card);
         }
-      }catch(error){
+      } catch (error) {
         console.error(error);
-        const p=document.createElement('p');p.className='note';p.textContent='Impossible de charger les commandes. Vérifie les règles Firestore.';list.append(p);
+        const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Impossible de charger les commandes. Vérifie les règles Firestore.'; list.append(p);
       }
     }
 
