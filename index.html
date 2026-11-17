@@ -626,6 +626,23 @@
       display: block;
     }
 
+    .product-image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      gap: 3px;
+      overflow: hidden;
+    }
+
+    .product-image-gallery img {
+      min-width: 0;
+      height: 190px;
+      object-fit: cover;
+    }
+
+    .product-image-gallery:has(img:only-child) {
+      grid-template-columns: 1fr;
+    }
+
     .product-placeholder {
       height: 190px;
       display: grid;
@@ -1474,9 +1491,15 @@
 
               <div class="field"><label for="productImage">Lien de l'image (facultatif)</label><input id="productImage"
                   type="url" placeholder="https://..."></div>
-              <div class="field"><label for="productImageFile">Ou importer une image</label><input id="productImageFile"
+              <div class="field"><label for="productImageFile">Importer la photo 1</label><input id="productImageFile"
                   type="file" accept="image/*"><img id="productImagePreview" class="photo-preview hidden"
-                  alt="Aperçu de l'image du produit"></div>
+                  alt="Aperçu de la photo 1"></div>
+              <div class="field"><label for="productImageFile2">Importer la photo 2 (facultatif)</label><input
+                  id="productImageFile2" type="file" accept="image/*"><img id="productImagePreview2"
+                  class="photo-preview hidden" alt="Aperçu de la photo 2"></div>
+              <div class="field"><label for="productImageFile3">Importer la photo 3 (facultatif)</label><input
+                  id="productImageFile3" type="file" accept="image/*"><img id="productImagePreview3"
+                  class="photo-preview hidden" alt="Aperçu de la photo 3"></div>
             </div>
             <div class="admin-grid">
               <div class="field"><label for="productKeywords">Mots-clés de recherche</label><input id="productKeywords"
@@ -1714,6 +1737,26 @@
       };
     }
 
+    function productImageList(product) {
+      const images = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
+      if (!images.length && product.image) images.push(product.image);
+      return images.filter(src => typeof src === 'string' && (/^https?:\/\//i.test(src) || /^data:image\//i.test(src))).slice(0, 3);
+    }
+
+    function appendProductImages(container, product) {
+      const images = productImageList(product);
+      if (!images.length) {
+        const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; container.append(ph);
+        return;
+      }
+      const gallery = document.createElement('div'); gallery.className = 'product-image-gallery';
+      images.forEach((src, index) => {
+        const img = document.createElement('img'); img.src = src; img.alt = `${product.name || 'Produit Pixora'} — photo ${index + 1}`; img.loading = 'lazy';
+        img.onerror = () => img.remove(); gallery.append(img);
+      });
+      container.append(gallery);
+    }
+
     function renderStore() {
       const grid = field('storeGrid');
       grid.replaceChildren();
@@ -1742,14 +1785,7 @@
       visible.forEach(product => {
         const card = document.createElement('article');
         card.className = 'product-card';
-        if (product.image && (/^https?:\/\//i.test(product.image) || /^data:image\//i.test(product.image))) {
-          const img = document.createElement('img');
-          img.src = product.image; img.alt = product.name || 'Produit Pixora'; img.loading = 'lazy';
-          img.onerror = () => { const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; img.replaceWith(ph); };
-          card.append(img);
-        } else {
-          const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; card.append(ph);
-        }
+        appendProductImages(card, product);
         const body = document.createElement('div'); body.className = 'product-body';
         const category = document.createElement('span'); category.className = 'note'; category.textContent = product.category || 'Création numérique';
         const title = document.createElement('h3'); title.textContent = product.name || 'Produit';
@@ -1818,9 +1854,7 @@
       }
       featured.forEach(product => {
         const card = document.createElement('article'); card.className = 'product-card';
-        if (product.image && (/^https?:\/\//i.test(product.image) || /^data:image\//i.test(product.image))) {
-          const img = document.createElement('img'); img.src = product.image; img.alt = product.name || 'Produit Pixora'; img.loading = 'lazy'; card.append(img);
-        } else { const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; card.append(ph); }
+        appendProductImages(card, product);
         const body = document.createElement('div'); body.className = 'product-body';
         const category = document.createElement('span'); category.className = 'note'; category.textContent = product.category || 'Création numérique';
         const title = document.createElement('h3'); title.textContent = product.name || 'Produit';
@@ -2082,6 +2116,20 @@
       preview.src = URL.createObjectURL(file);
       preview.classList.remove('hidden');
     });
+    [2, 3].forEach(number => {
+      field(`productImageFile${number}`).addEventListener('change', () => {
+        const file = field(`productImageFile${number}`).files?.[0];
+        const preview = field(`productImagePreview${number}`);
+        if (!file) { preview.classList.add('hidden'); preview.removeAttribute('src'); return; }
+        if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
+          showProductMessage('Choisis une image de 5 Mo ou moins.');
+          field(`productImageFile${number}`).value = '';
+          preview.classList.add('hidden'); return;
+        }
+        preview.src = URL.createObjectURL(file); preview.classList.remove('hidden');
+      });
+    });
+
     function resetProductForm() {
       productForm.reset();
       field('editProductId').value = '';
@@ -2089,8 +2137,12 @@
       field('productFeatured').checked = false;
       field('productPhotoMode').value = 'none';
       field('productKeywords').value = '';
-      field('productImagePreview').classList.add('hidden');
-      field('productImagePreview').removeAttribute('src');
+      [1, 2, 3].forEach(number => {
+        const input = field(number === 1 ? 'productImageFile' : `productImageFile${number}`);
+        const preview = field(number === 1 ? 'productImagePreview' : `productImagePreview${number}`);
+        input.value = ''; preview.classList.add('hidden'); preview.removeAttribute('src');
+      });
+      field('productImage').value = '';
       field('saveProductBtn').textContent = 'Enregistrer le produit';
     }
     field('cancelEditBtn').addEventListener('click', resetProductForm);
@@ -2123,9 +2175,17 @@
       const saveButton = field('saveProductBtn');
       saveButton.disabled = true;
       try {
-        let image = field('productImage').value.trim();
-        const imageFile = field('productImageFile').files?.[0];
-        if (imageFile) image = await compressImage(imageFile, 420 * 1024);
+        const editingProduct = products.find(p => p.id === field('editProductId').value);
+        const images = Array.isArray(editingProduct?.images) ? [...editingProduct.images] : (editingProduct?.image ? [editingProduct.image] : []);
+        const imageUrl = field('productImage').value.trim();
+        if (imageUrl) images[0] = imageUrl;
+        for (let number = 1; number <= 3; number++) {
+          const inputId = number === 1 ? 'productImageFile' : `productImageFile${number}`;
+          const file = field(inputId).files?.[0];
+          if (file) images[number - 1] = await compressImage(file, 420 * 1024);
+        }
+        const cleanImages = images.filter(Boolean).slice(0, 3);
+        const image = cleanImages[0] || '';
         const customOptions = selectedProductOptions();
         const photoMode = field('productPhotoMode').value;
         const item = {
@@ -2133,6 +2193,7 @@
           price,
           category: field('productCategory').value,
           image,
+          images: cleanImages,
           description: field('productDescription').value.trim(),
           keywords: field('productKeywords').value.split(',').map(k => k.trim()).filter(Boolean),
           featured: field('productFeatured').checked,
@@ -2191,9 +2252,16 @@
           field('productName').value = product.name || '';
           field('productCategory').value = product.category || 'Autre';
           field('productPrice').value = product.price ?? '';
-          field('productImage').value = product.image || '';
-          field('productImageFile').value = '';
-          field('productImagePreview').classList.add('hidden');
+          const savedImages = productImageList(product);
+          field('productImage').value = (savedImages[0] && /^https?:\/\//i.test(savedImages[0])) ? savedImages[0] : '';
+          [1, 2, 3].forEach(number => {
+            const input = field(number === 1 ? 'productImageFile' : `productImageFile${number}`);
+            const preview = field(number === 1 ? 'productImagePreview' : `productImagePreview${number}`);
+            input.value = '';
+            const src = savedImages[number - 1];
+            if (src) { preview.src = src; preview.classList.remove('hidden'); }
+            else { preview.classList.add('hidden'); preview.removeAttribute('src'); }
+          });
           document.querySelectorAll('.product-custom-option').forEach(input => {
             const savedOptions = Array.isArray(product.customOptions) ? product.customOptions : [];
             input.checked = savedOptions.includes(input.value);
