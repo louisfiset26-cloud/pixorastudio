@@ -1750,7 +1750,7 @@
     function productImageList(product) {
       const list = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
       if (!list.length && product.image) list.push(product.image);
-      return [...new Set(list)].filter(src => /^https?:\\/\\//i.test(src) || /^data:image\\//i.test(src));
+   return [...new Set(list)].filter(src => /^https?:\/\//i.test(src) || /^data:image\//i.test(src));
     }
 
     function renderProductGallery(product, card) {
