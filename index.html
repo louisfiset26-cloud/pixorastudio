@@ -844,40 +844,6 @@
       margin-top: 8px;
     }
 
-    .product-gallery {
-      display: flex;
-      gap: 7px;
-      width: 100%;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      background: var(--pale);
-    }
-    .product-gallery img {
-      flex: 0 0 100%;
-      width: 100%;
-      height: 190px;
-      object-fit: cover;
-      scroll-snap-align: start;
-      display: block;
-    }
-    .product-gallery-count {
-      font-size: .76rem;
-      color: var(--muted);
-      margin-top: 5px;
-    }
-    .admin-image-previews {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 9px;
-    }
-    .admin-image-previews img {
-      width: 86px;
-      height: 70px;
-      object-fit: cover;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-    }
     .photo-preview {
       display: block;
       max-width: 180px;
@@ -1506,15 +1472,11 @@
               <div class="field"><label for="productPrice">Prix normal ($) *</label><input id="productPrice"
                   type="number" min="0" step="0.01" required placeholder="20.00"></div>
 
-              <div class="field"><label for="productImage">Lien d'une image (facultatif)</label><input id="productImage"
-                  type="url" placeholder="https://...">
-                <p class="field-hint">Tu peux ajouter une image par lien et plusieurs images depuis ton appareil.</p>
-              </div>
-              <div class="field"><label for="productImageFile">Importer plusieurs images</label><input id="productImageFile"
-                  type="file" accept="image/*" multiple>
-                <p class="field-hint">Jusqu'à 3 images par produit. Formats image acceptés, 5 Mo maximum par fichier.</p>
-                <div id="productImagePreview" class="admin-image-previews" aria-live="polite"></div>
-              </div>
+              <div class="field"><label for="productImage">Lien de l'image (facultatif)</label><input id="productImage"
+                  type="url" placeholder="https://..."></div>
+              <div class="field"><label for="productImageFile">Ou importer une image</label><input id="productImageFile"
+                  type="file" accept="image/*"><img id="productImagePreview" class="photo-preview hidden"
+                  alt="Aperçu de l'image du produit"></div>
             </div>
             <div class="admin-grid">
               <div class="field"><label for="productKeywords">Mots-clés de recherche</label><input id="productKeywords"
@@ -1533,8 +1495,14 @@
               <label><input type="checkbox" class="product-custom-option" value="color"> Couleur souhaitée</label>
               <label><input type="checkbox" class="product-custom-option" value="text"> Texte à inscrire</label>
               <label><input type="checkbox" class="product-custom-option" value="format"> Format</label>
-              <label><input type="checkbox" class="product-custom-option" value="photo"> Photo à fournir
-                (obligatoire)</label>
+              <div class="field" style="margin-top:10px">
+                <label for="productPhotoMode">Photo demandée au client</label>
+                <select id="productPhotoMode">
+                  <option value="none">Aucune photo</option>
+                  <option value="optional">Photo facultative</option>
+                  <option value="required">Photo obligatoire</option>
+                </select>
+              </div>
               <label><input type="checkbox" class="product-custom-option" value="instructions"> Instructions
                 particulières</label>
             </div>
@@ -1711,7 +1679,6 @@
     let adminUnlocked = false;
     let products = [];
     let cart = [];
-    let editingProductImages = [];
     // Données utilisées par la boutique et les avis.
     let reviews = [];
 
@@ -1747,40 +1714,6 @@
       };
     }
 
-    function productImageList(product) {
-      const list = Array.isArray(product.images) ? product.images.filter(Boolean) : [];
-      if (!list.length && product.image) list.push(product.image);
-   return [...new Set(list)].filter(src => /^https?:\/\//i.test(src) || /^data:image\//i.test(src));
-    }
-
-    function renderProductGallery(product, card) {
-      const images = productImageList(product);
-      if (!images.length) {
-        const placeholder = document.createElement('div');
-        placeholder.className = 'product-placeholder';
-        placeholder.textContent = '🎨';
-        card.append(placeholder);
-        return;
-      }
-      const gallery = document.createElement('div');
-      gallery.className = 'product-gallery';
-      images.forEach((src, index) => {
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = `${product.name || 'Produit Pixora'} — image ${index + 1}`;
-        img.loading = 'lazy';
-        img.onerror = () => img.remove();
-        gallery.append(img);
-      });
-      card.append(gallery);
-      if (images.length > 1) {
-        const count = document.createElement('div');
-        count.className = 'product-gallery-count';
-        count.textContent = `${images.length} images · fais défiler les images horizontalement`;
-        card.append(count);
-      }
-    }
-
     function renderStore() {
       const grid = field('storeGrid');
       grid.replaceChildren();
@@ -1809,7 +1742,14 @@
       visible.forEach(product => {
         const card = document.createElement('article');
         card.className = 'product-card';
-        renderProductGallery(product, card);
+        if (product.image && (/^https?:\/\//i.test(product.image) || /^data:image\//i.test(product.image))) {
+          const img = document.createElement('img');
+          img.src = product.image; img.alt = product.name || 'Produit Pixora'; img.loading = 'lazy';
+          img.onerror = () => { const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; img.replaceWith(ph); };
+          card.append(img);
+        } else {
+          const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; card.append(ph);
+        }
         const body = document.createElement('div'); body.className = 'product-body';
         const category = document.createElement('span'); category.className = 'note'; category.textContent = product.category || 'Création numérique';
         const title = document.createElement('h3'); title.textContent = product.name || 'Produit';
@@ -1824,8 +1764,11 @@
         const add = document.createElement('button'); add.type = 'button'; add.className = 'button'; add.textContent = 'Ajouter au panier';
         add.addEventListener('click', () => addToCart(product.id));
         body.append(category, title, desc, prices);
-        if ((product.customOptions || []).includes('photo') || product.requiresImage) {
-          const req = document.createElement('p'); req.className = 'photo-required'; req.textContent = '📷 Photo à fournir lors de la commande'; body.append(req);
+        const photoMode = getPhotoMode(product);
+        if (photoMode !== 'none') {
+          const req = document.createElement('p'); req.className = 'photo-required';
+          req.textContent = photoMode === 'required' ? '📷 Photo obligatoire lors de la commande' : '📷 Photo facultative lors de la commande';
+          body.append(req);
         }
         body.append(add);
 
@@ -1875,7 +1818,9 @@
       }
       featured.forEach(product => {
         const card = document.createElement('article'); card.className = 'product-card';
-        renderProductGallery(product, card);
+        if (product.image && (/^https?:\/\//i.test(product.image) || /^data:image\//i.test(product.image))) {
+          const img = document.createElement('img'); img.src = product.image; img.alt = product.name || 'Produit Pixora'; img.loading = 'lazy'; card.append(img);
+        } else { const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; card.append(ph); }
         const body = document.createElement('div'); body.className = 'product-body';
         const category = document.createElement('span'); category.className = 'note'; category.textContent = product.category || 'Création numérique';
         const title = document.createElement('h3'); title.textContent = product.name || 'Produit';
@@ -1918,9 +1863,16 @@
       return Array.from(document.querySelectorAll('.product-custom-option:checked'), input => input.value);
     }
 
+    function getPhotoMode(product) {
+      if (product?.photoMode === 'required' || product?.photoMode === 'optional' || product?.photoMode === 'none') return product.photoMode;
+      // Compatibilité avec les anciens produits déjà enregistrés.
+      return product?.requiresImage || (product?.customOptions || []).includes('photo') ? 'required' : 'none';
+    }
+
     function productOptions(product) {
-      const options = Array.isArray(product.customOptions) ? product.customOptions : [];
-      if (product.requiresImage && !options.includes('photo')) options.push('photo');
+      const options = Array.isArray(product.customOptions) ? [...product.customOptions] : [];
+      const photoMode = getPhotoMode(product);
+      if (photoMode !== 'none' && !options.includes('photo')) options.push('photo');
       return options;
     }
 
@@ -1942,7 +1894,10 @@
         productOptions(product).forEach(key => {
           const def = customizationDefinitions[key]; if (!def) return;
           const wrap = document.createElement('div'); wrap.className = 'field'; wrap.style.marginTop = '10px';
-          const label = document.createElement('label'); label.textContent = def.label + (key === 'photo' ? ' *' : ''); wrap.append(label);
+          const photoMode = getPhotoMode(product);
+          const label = document.createElement('label');
+          label.textContent = def.label + (key === 'photo' ? (photoMode === 'required' ? ' (obligatoire)' : ' (facultatif)') : '');
+          wrap.append(label);
           let control;
           if (def.type === 'textarea') { control = document.createElement('textarea'); control.placeholder = def.placeholder; control.value = item.customizations[key] || ''; }
           else if (def.type === 'select') {
@@ -1950,7 +1905,8 @@
             def.options.forEach(option => control.add(new Option(option, option)));
             control.value = item.customizations[key] || '';
           } else if (def.type === 'file') {
-            control = document.createElement('input'); control.type = 'file'; control.accept = 'image/*'; control.required = true;
+            control = document.createElement('input'); control.type = 'file'; control.accept = 'image/*';
+            control.required = photoMode === 'required';
             control.addEventListener('change', () => { item.photoFile = control.files?.[0] || null; });
             if (item.photoFile) { const chosen = document.createElement('p'); chosen.className = 'note'; chosen.textContent = `Photo choisie : ${item.photoFile.name}`; wrap.append(chosen); }
           } else { control = document.createElement('input'); control.type = 'text'; control.placeholder = def.placeholder; control.value = item.customizations[key] || ''; }
@@ -2113,56 +2069,30 @@
     }, error => console.error('Chargement des avis impossible', error));
 
     const productForm = field('productForm');
-    function renderAdminImagePreviews(files = []) {
-      const preview = field('productImagePreview');
-      preview.replaceChildren();
-      const all = [...editingProductImages];
-      files.forEach(file => {
-        const url = URL.createObjectURL(file);
-        all.push({ src: url, temporary: true });
-      });
-      all.forEach((entry, index) => {
-        const img = document.createElement('img');
-        img.src = typeof entry === 'string' ? entry : entry.src;
-        img.alt = `Aperçu de l'image ${index + 1}`;
-        preview.append(img);
-      });
-      if (!all.length) {
-        const note = document.createElement('span');
-        note.className = 'field-hint';
-        note.textContent = 'Aucune image sélectionnée.';
-        preview.append(note);
-      }
-    }
-
     field('productImageFile').addEventListener('change', () => {
-      const files = [...(field('productImageFile').files || [])];
-      if (files.some(file => !file.type.startsWith('image/') || file.size > 5 * 1024 * 1024)) {
-        showProductMessage('Chaque fichier doit être une image de 5 Mo ou moins.');
+      const file = field('productImageFile').files?.[0];
+      const preview = field('productImagePreview');
+      if (!file) { preview.classList.add('hidden'); preview.removeAttribute('src'); return; }
+      if (!file.type.startsWith('image/') || file.size > 5 * 1024 * 1024) {
+        showProductMessage('Choisis une image de 5 Mo ou moins.');
         field('productImageFile').value = '';
-        renderAdminImagePreviews();
+        preview.classList.add('hidden');
         return;
       }
-      if (editingProductImages.length + files.length > 3) {
-        showProductMessage('Tu peux ajouter un maximum de 3 images par produit. Retire des fichiers ou garde moins d’images.');
-        field('productImageFile').value = '';
-        renderAdminImagePreviews();
-        return;
-      }
-      renderAdminImagePreviews(files);
+      preview.src = URL.createObjectURL(file);
+      preview.classList.remove('hidden');
     });
-
     function resetProductForm() {
       productForm.reset();
-      editingProductImages = [];
       field('editProductId').value = '';
       field('discountType').value = 'none';
       field('productFeatured').checked = false;
+      field('productPhotoMode').value = 'none';
       field('productKeywords').value = '';
-      renderAdminImagePreviews();
+      field('productImagePreview').classList.add('hidden');
+      field('productImagePreview').removeAttribute('src');
       field('saveProductBtn').textContent = 'Enregistrer le produit';
     }
-    renderAdminImagePreviews();
     field('cancelEditBtn').addEventListener('click', resetProductForm);
 
     productForm.addEventListener('submit', async event => {
@@ -2193,36 +2123,22 @@
       const saveButton = field('saveProductBtn');
       saveButton.disabled = true;
       try {
-        const imageUrl = field('productImage').value.trim();
-        const uploadedFiles = [...(field('productImageFile').files || [])];
-        let images = [...editingProductImages];
-        if (imageUrl && !images.includes(imageUrl)) images.unshift(imageUrl);
-        if (images.length + uploadedFiles.length > 3) {
-          showProductMessage('Un produit peut contenir un maximum de 3 images.');
-          return;
-        }
-        for (const file of uploadedFiles) {
-          images.push(await compressImage(file, 180 * 1024));
-        }
-        images = [...new Set(images)];
-        const totalImageChars = images.reduce((sum, imageData) => sum + imageData.length, 0);
-        if (totalImageChars > 780000) {
-          showProductMessage('Les images sont trop volumineuses au total. Réduis leur nombre ou choisis des images plus petites.');
-          return;
-        }
-        const image = images[0] || '';
+        let image = field('productImage').value.trim();
+        const imageFile = field('productImageFile').files?.[0];
+        if (imageFile) image = await compressImage(imageFile, 420 * 1024);
         const customOptions = selectedProductOptions();
+        const photoMode = field('productPhotoMode').value;
         const item = {
           name,
           price,
           category: field('productCategory').value,
           image,
-          images,
           description: field('productDescription').value.trim(),
           keywords: field('productKeywords').value.split(',').map(k => k.trim()).filter(Boolean),
           featured: field('productFeatured').checked,
           customOptions,
-          requiresImage: customOptions.includes('photo'),
+          photoMode,
+          requiresImage: photoMode === 'required',
           discountType,
           discountValue,
           discountStart: start,
@@ -2275,15 +2191,14 @@
           field('productName').value = product.name || '';
           field('productCategory').value = product.category || 'Autre';
           field('productPrice').value = product.price ?? '';
-          const savedImages = productImageList(product);
-          editingProductImages = savedImages.slice(0, 3);
-          field('productImage').value = '';
+          field('productImage').value = product.image || '';
           field('productImageFile').value = '';
-          renderAdminImagePreviews();
+          field('productImagePreview').classList.add('hidden');
           document.querySelectorAll('.product-custom-option').forEach(input => {
-            const savedOptions = (product.customOptions && product.customOptions.length) ? product.customOptions : (product.requiresImage ? ['photo'] : []);
+            const savedOptions = Array.isArray(product.customOptions) ? product.customOptions : [];
             input.checked = savedOptions.includes(input.value);
           });
+          field('productPhotoMode').value = getPhotoMode(product);
           field('productDescription').value = product.description || '';
           field('productKeywords').value = Array.isArray(product.keywords) ? product.keywords.join(', ') : (product.keywords || '');
           field('productFeatured').checked = !!product.featured;
@@ -2349,7 +2264,7 @@
       if (!cart.length) { message.textContent = 'Ton panier est vide.'; message.style.display = 'block'; return; }
       for (const item of cart) {
         const product = products.find(p => p.id === item.productId);
-        if (productOptions(product || {}).includes('photo') && !item.photoFile) {
+        if (product && getPhotoMode(product) === 'required' && !item.photoFile) {
           message.textContent = `Ajoute une photo pour « ${product.name} » avant de commander.`; message.style.display = 'block'; return;
         }
       }
