@@ -978,14 +978,23 @@
     }
 
 
-    /* Navigation en pages indépendantes : Recherche et Panier */
+    /* Navigation : Recherche, Panier et Administration en vues distinctes */
     body.page-recherche main>section:not(#recherche),
-    body.page-panier main>section:not(#panier) {
+    body.page-panier main>section:not(#panier),
+    body.page-administration main>section {
       display: none !important;
     }
 
-    body:not(.page-recherche):not(.page-panier) main>#recherche,
-    body:not(.page-recherche):not(.page-panier) main>#panier {
+    body:not(.page-recherche):not(.page-panier):not(.page-administration) main>#recherche,
+    body:not(.page-recherche):not(.page-panier):not(.page-administration) main>#panier {
+      display: none !important;
+    }
+
+    body.page-administration #administration {
+      display: block !important;
+    }
+
+    body:not(.page-administration) #administration {
       display: none !important;
     }
 
@@ -1050,6 +1059,8 @@
         <a href="#panier">Panier <span id="navCartCount">(0)</span></a>
 
         <a href="#commande">Commander</a>
+
+        <a href="#administration">Administration</a>
 
       </nav>
 
@@ -1586,12 +1597,23 @@
       link.addEventListener('click', () => navLinks.classList.remove('open'));
     });
 
-    // Recherche et Panier sont des pages distinctes, et non des sections qui défilent.
+    // Navigation fiable entre les différentes vues du site.
     function updateIndependentPages() {
-      const page = window.location.hash;
-      document.body.classList.toggle('page-recherche', page === '#recherche');
-      document.body.classList.toggle('page-panier', page === '#panier');
-      if (page === '#recherche' || page === '#panier') {
+      let page = window.location.hash;
+      // Le lien « Créations » mène à la présentation des services.
+      if (page === '#creations') {
+        window.location.hash = '#services';
+        return;
+      }
+      const isSearch = page === '#recherche';
+      const isCart = page === '#panier';
+      const isAdmin = page === '#administration';
+      document.body.classList.toggle('page-recherche', isSearch);
+      document.body.classList.toggle('page-panier', isCart);
+      document.body.classList.toggle('page-administration', isAdmin);
+      const admin = document.getElementById('administration');
+      if (admin) admin.classList.toggle('hidden', !isAdmin);
+      if (isSearch || isCart || isAdmin) {
         window.scrollTo({ top: 0, behavior: 'auto' });
       }
     }
@@ -1912,6 +1934,8 @@
 
     field('adminAccessLink').addEventListener('click', event => {
       event.preventDefault();
+      window.location.hash = '#administration';
+      updateIndependentPages();
       openAdmin();
     });
 
@@ -2280,3 +2304,18 @@
         const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Impossible de charger les commandes. Vérifie les règles Firestore.'; list.append(p);
       }
     }
+
+    field('refreshOrdersBtn').addEventListener('click', loadAdminOrders);
+
+    // Le formulaire de demande personnalisée reste disponible séparément du panier.
+    field('orderForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const message = field('formMessage');
+      message.style.display = 'block';
+      message.textContent = 'Merci! Ta demande est prête, mais la réception doit encore être connectée à un service d’envoi.';
+    });
+  </script>
+
+</body>
+
+</html>
