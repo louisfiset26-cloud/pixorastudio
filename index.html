@@ -998,6 +998,32 @@
       display: none !important;
     }
 
+
+    .admin-corner {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index: 50;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(23, 33, 61, .82);
+      color: #fff;
+      font-size: 18px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
+      opacity: .58;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .admin-corner:hover,
+    .admin-corner:focus-visible {
+      opacity: 1;
+      transform: scale(1.06);
+    }
+
     .hidden {
       display: none !important;
     }
@@ -1052,19 +1078,13 @@
 
         <a href="#services">Services</a>
 
-        <a href="#creations">Créations</a>
-
         <a href="#recherche">Rechercher</a>
 
         <a href="#panier">Panier <span id="navCartCount">(0)</span></a>
 
-        <a href="#commande">Commander</a>
-
-        <a href="#administration">Administration</a>
-
       </nav>
 
-      <a class="button" href="#commande">Passer une commande</a>
+      <a class="button" href="#panier">Passer une commande</a>
 
     </div>
 
@@ -1089,7 +1109,7 @@
 
             <a class="button" href="#services">Découvrir nos services</a>
 
-            <a class="button secondary" href="#commande">Demander une création</a>
+            <a class="button secondary" href="#panier">Demander une création</a>
 
           </div>
 
@@ -1293,88 +1313,90 @@
           <div id="trackingResult" class="tracking-result hidden" role="status"></div>
         </div>
       </div>
-    </section>
 
-    <section id="commande">
+      <div id="commande">
 
-      <div class="container">
+        <div class="container">
 
-        <div class="section-head">
+          <div class="section-head">
 
-          <span class="eyebrow">VOTRE PROJET COMMENCE ICI</span>
+            <span class="eyebrow">VOTRE PROJET COMMENCE ICI</span>
 
-          <h2>Demander une commande</h2>
+            <h2>Demander une commande</h2>
 
-          <p>Remplissez les informations ci-dessous pour décrire votre projet.</p>
+            <p>Remplissez les informations ci-dessous pour décrire votre projet.</p>
 
-        </div>
+          </div>
 
-        <div class="order-wrap">
+          <div class="order-wrap">
 
-          <aside class="order-info">
+            <aside class="order-info">
 
-            <h2>Créons quelque chose qui vous ressemble.</h2>
+              <h2>Créons quelque chose qui vous ressemble.</h2>
 
-            <p>Expliquez-nous votre idée, le style souhaité et les détails importants.</p>
+              <p>Expliquez-nous votre idée, le style souhaité et les détails importants.</p>
 
-            <ul>
+              <ul>
 
-              <li>Créations personnalisées</li>
+                <li>Créations personnalisées</li>
 
-              <li>Communication avant la réalisation</li>
+                <li>Communication avant la réalisation</li>
 
-              <li>Livraison en format numérique</li>
+                <li>Livraison en format numérique</li>
 
-            </ul>
+              </ul>
 
-          </aside>
+            </aside>
 
-          <form id="orderForm">
+            <form id="orderForm">
 
-            <div class="field"><label for="customerName">Votre nom *</label><input id="customerName" name="customerName"
-                required placeholder="Ex. : Alex Tremblay"></div>
+              <div class="field"><label for="customerName">Votre nom *</label><input id="customerName"
+                  name="customerName" required placeholder="Ex. : Alex Tremblay"></div>
 
-            <div class="field"><label for="customerEmail">Votre adresse courriel *</label><input id="customerEmail"
-                name="customerEmail" type="email" required placeholder="exemple@courriel.com"></div>
+              <div class="field"><label for="customerEmail">Votre adresse courriel *</label><input id="customerEmail"
+                  name="customerEmail" type="email" required placeholder="exemple@courriel.com"></div>
 
-            <div class="field"><label for="product">Quel produit souhaitez-vous? *</label>
+              <div class="field"><label for="product">Quel produit souhaitez-vous? *</label>
 
-              <select id="product" name="product" required>
+                <select id="product" name="product" required>
 
-                <option value="">Choisir un service</option>
+                  <option value="">Choisir un service</option>
 
-                <option>Publication pour les réseaux sociaux</option>
+                  <option>Publication pour les réseaux sociaux</option>
 
-                <option>Document numérique</option>
+                  <option>Document numérique</option>
 
-                <option>Menu numérique</option>
+                  <option>Menu numérique</option>
 
-                <option>Carte de fête</option>
+                  <option>Carte de fête</option>
 
-                <option>Carte professionnelle</option>
+                  <option>Carte professionnelle</option>
 
-                <option>Autre demande</option>
+                  <option>Autre demande</option>
 
-              </select>
+                </select>
 
-            </div>
+              </div>
 
-            <div class="field"><label for="details">Décrivez votre idée *</label><textarea id="details" name="details"
-                required placeholder="Couleurs, texte, dimensions, style souhaité..."></textarea></div>
+              <div class="field"><label for="details">Décrivez votre idée *</label><textarea id="details" name="details"
+                  required placeholder="Couleurs, texte, dimensions, style souhaité..."></textarea></div>
 
-            <button class="button" type="submit">Préparer ma demande</button>
+              <button class="button" type="submit">Préparer ma demande</button>
 
-            <p class="note">Aucun paiement n'est demandé sur ce site.</p>
+              <p class="note">Aucun paiement n'est demandé sur ce site.</p>
 
-            <div class="form-message" id="formMessage" role="status"></div>
+              <div class="form-message" id="formMessage" role="status"></div>
 
-          </form>
+            </form>
+
+          </div>
 
         </div>
 
       </div>
-
     </section>
+
+
 
   </main>
 
@@ -1550,6 +1572,9 @@
 
   </section>
 
+  <a href="#administration" id="adminAccessLink" class="admin-corner" aria-label="Ouvrir l’administration"
+    title="Administration">⚙</a>
+
   <footer>
 
     <div class="container footer-row">
@@ -1558,8 +1583,7 @@
         <p>Vos idées, notre créativité.</p>
       </div>
 
-      <p><a href="#administration" id="adminAccessLink">Administration</a> · © <span id="year"></span> Pixora Studio.
-        Tous droits réservés.</p>
+      <p>© <span id="year"></span> Pixora Studio. Tous droits réservés.</p>
 
     </div>
 
@@ -1951,7 +1975,6 @@
     field('adminAccessLink').addEventListener('click', event => {
       event.preventDefault();
       window.location.hash = '#administration';
-      updateIndependentPages();
       openAdmin();
     });
 
