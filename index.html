@@ -1609,6 +1609,17 @@
     let adminUnlocked = false;
     let products = [];
     let cart = [];
+    // Données utilisées par la boutique et les avis.
+    let reviews = [];
+
+    // Champs de personnalisation fixes que l'administration peut activer par produit.
+    const customizationDefinitions = {
+      color: { label: 'Couleur souhaitée', type: 'text', placeholder: 'Ex. : bleu, rose, noir...' },
+      text: { label: 'Texte à inscrire', type: 'textarea', placeholder: 'Écris le texte à ajouter à ta création...' },
+      format: { label: 'Format', type: 'select', options: ['Carré', 'Portrait', 'Paysage', 'A4', 'A5', 'Personnalisé'] },
+      photo: { label: 'Photo à fournir', type: 'file', placeholder: 'Ajoute ta photo' },
+      instructions: { label: 'Instructions particulières', type: 'textarea', placeholder: 'Ajoute tes précisions...' }
+    };
 
     const money = value => new Intl.NumberFormat('fr-CA', {
       style: 'currency', currency: 'CAD'
@@ -1773,6 +1784,10 @@
       else cart.push({ productId, quantity: 1, photoFile: null, customizations: {} });
       renderCart();
       field('cartPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function selectedProductOptions() {
+      return Array.from(document.querySelectorAll('.product-custom-option:checked'), input => input.value);
     }
 
     function productOptions(product) {
@@ -2265,18 +2280,3 @@
         const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Impossible de charger les commandes. Vérifie les règles Firestore.'; list.append(p);
       }
     }
-
-    field('refreshOrdersBtn').addEventListener('click', loadAdminOrders);
-
-    // Le formulaire de demande personnalisée reste disponible séparément du panier.
-    field('orderForm').addEventListener('submit', event => {
-      event.preventDefault();
-      const message = field('formMessage');
-      message.style.display = 'block';
-      message.textContent = 'Merci! Ta demande est prête, mais la réception doit encore être connectée à un service d’envoi.';
-    });
-  </script>
-
-</body>
-
-</html>
