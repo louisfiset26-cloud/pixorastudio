@@ -880,6 +880,103 @@
       }
     }
 
+
+    .store-tools {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 0 0 22px
+    }
+
+    .review-area {
+      border-top: 1px solid var(--line);
+      margin-top: 14px;
+      padding-top: 12px
+    }
+
+    .review-area summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--navy)
+    }
+
+    .review-stars {
+      color: #e2a400;
+      font-weight: 800
+    }
+
+    .review-form {
+      box-shadow: none !important;
+      border: 0 !important;
+      padding: 12px 0 0 !important;
+      margin: 0 !important
+    }
+
+    .review-form textarea {
+      min-height: 65px
+    }
+
+    .custom-options {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      margin: 12px 0
+    }
+
+    .custom-options label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px 0;
+      font-weight: 600
+    }
+
+    .custom-options input[type=checkbox] {
+      width: auto;
+      margin: 0
+    }
+
+    .tracking-panel {
+      margin-top: 26px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 16px
+    }
+
+    .tracking-result {
+      padding: 12px;
+      border-radius: 10px;
+      background: #f1efff;
+      margin-top: 12px
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 99px;
+      background: #eeeaff;
+      color: #4937a5;
+      font-size: .82rem;
+      font-weight: 800
+    }
+
+    .order-admin-card select {
+      max-width: 260px;
+      margin-top: 8px
+    }
+
+    @media(max-width:800px) {
+      .store-tools {
+        grid-template-columns: 1fr 1fr
+      }
+    }
+
+    @media(max-width:560px) {
+      .store-tools {
+        grid-template-columns: 1fr
+      }
+    }
+
     .hidden {
       display: none !important;
     }
@@ -1097,6 +1194,20 @@
 
         </div>
 
+        <div class="store-tools">
+          <input id="storeSearch" type="search" placeholder="Rechercher un produit...">
+          <select id="storeCategory">
+            <option value="">Toutes les catégories</option>
+          </select>
+          <select id="storeSort">
+            <option value="default">Trier par défaut</option>
+            <option value="priceAsc">Prix croissant</option>
+            <option value="priceDesc">Prix décroissant</option>
+            <option value="name">Nom A à Z</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:8px;margin:0"><input id="saleOnly" type="checkbox"
+              style="width:auto"> En rabais seulement</label>
+        </div>
         <div class="store-grid" id="storeGrid">
 
           <p class="note">Les produits ajoutés apparaîtront ici.</p>
@@ -1129,6 +1240,16 @@
               <p class="form-message" id="cartOrderMessage" role="status"></p>
             </form>
           </div>
+        </div>
+        <div class="tracking-panel">
+          <h3>Suivre une commande</h3>
+          <p class="note">Entre le code de suivi reçu après ta commande.</p>
+          <form id="trackOrderForm"
+            style="box-shadow:none;border:0;padding:8px 0 0;display:flex;gap:10px;flex-wrap:wrap">
+            <input id="trackingCodeInput" placeholder="Code de suivi" required style="flex:1;min-width:180px">
+            <button class="button" type="submit">Voir le statut</button>
+          </form>
+          <div id="trackingResult" class="tracking-result hidden" role="status"></div>
         </div>
 
       </div>
@@ -1322,9 +1443,17 @@
                   type="file" accept="image/*"><img id="productImagePreview" class="photo-preview hidden"
                   alt="Aperçu de l'image du produit"></div>
             </div>
-            <div class="field"><label><input id="productRequiresImage" type="checkbox"
-                  style="width:auto;margin-right:8px">Le client doit fournir une photo pour commander ce produit</label>
-              <p class="field-hint">Ex. : personnalisation à partir d'une photo du client.</p>
+            <div class="custom-options">
+              <strong>Options de personnalisation à afficher au client</strong>
+              <p class="field-hint">Les options sont toujours les mêmes. Coche seulement celles qui s'appliquent à ce
+                produit.</p>
+              <label><input type="checkbox" class="product-custom-option" value="color"> Couleur souhaitée</label>
+              <label><input type="checkbox" class="product-custom-option" value="text"> Texte à inscrire</label>
+              <label><input type="checkbox" class="product-custom-option" value="format"> Format</label>
+              <label><input type="checkbox" class="product-custom-option" value="photo"> Photo à fournir
+                (obligatoire)</label>
+              <label><input type="checkbox" class="product-custom-option" value="instructions"> Instructions
+                particulières</label>
             </div>
 
             <div class="field"><label for="productDescription">Description</label><textarea id="productDescription"
@@ -1377,6 +1506,13 @@
           </div>
 
           <div style="border-top:1px solid var(--line);margin-top:28px;padding-top:20px">
+            <h3>Avis des clients</h3>
+            <div id="adminReviewsList">
+              <p class="note">Les avis publiés apparaîtront ici.</p>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--line);margin-top:28px;padding-top:20px">
             <div class="cart-heading">
               <h3>Commandes reçues</h3><button class="small-btn" id="refreshOrdersBtn" type="button">Actualiser</button>
             </div>
@@ -1415,7 +1551,7 @@
       getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import {
-      getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, getDocs, getDoc
+      getFirestore, collection, onSnapshot, addDoc, setDoc, updateDoc, deleteDoc, doc, getDocs, getDoc
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     // Remplace ces valeurs par la configuration de ton application Web Firebase.
@@ -1477,67 +1613,102 @@
     function renderStore() {
       const grid = field('storeGrid');
       grid.replaceChildren();
-      if (!products.length) {
+      const search = (field('storeSearch')?.value || '').trim().toLocaleLowerCase('fr');
+      const categoryFilter = field('storeCategory')?.value || '';
+      let visible = products.filter(product => {
+        const matchesText = !search || `${product.name || ''} ${product.description || ''} ${product.category || ''}`.toLocaleLowerCase('fr').includes(search);
+        const matchesCategory = !categoryFilter || product.category === categoryFilter;
+        const matchesSale = !field('saleOnly')?.checked || !!discountInfo(product);
+        return matchesText && matchesCategory && matchesSale;
+      });
+      const sort = field('storeSort')?.value || 'default';
+      if (sort === 'priceAsc') visible.sort((a, b) => currentPrice(a) - currentPrice(b));
+      if (sort === 'priceDesc') visible.sort((a, b) => currentPrice(b) - currentPrice(a));
+      if (sort === 'name') visible.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'fr'));
+
+      if (!products.length || !visible.length) {
         const empty = document.createElement('p');
         empty.className = 'note';
-        empty.textContent = 'La boutique se remplit bientôt. Revenez voir nos créations !';
+        empty.textContent = products.length ? 'Aucun produit ne correspond à ta recherche.' : 'La boutique se remplit bientôt. Revenez voir nos créations !';
         grid.append(empty);
         renderCart();
         return;
       }
-      products.forEach(product => {
+      visible.forEach(product => {
         const card = document.createElement('article');
         card.className = 'product-card';
         if (product.image && (/^https?:\/\//i.test(product.image) || /^data:image\//i.test(product.image))) {
           const img = document.createElement('img');
-          img.src = product.image;
-          img.alt = product.name || 'Produit Pixora';
-          img.loading = 'lazy';
-          img.onerror = () => {
-            const placeholder = document.createElement('div');
-            placeholder.className = 'product-placeholder';
-            placeholder.textContent = '🎨';
-            img.replaceWith(placeholder);
-          };
+          img.src = product.image; img.alt = product.name || 'Produit Pixora'; img.loading = 'lazy';
+          img.onerror = () => { const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; img.replaceWith(ph); };
           card.append(img);
         } else {
-          const placeholder = document.createElement('div');
-          placeholder.className = 'product-placeholder';
-          placeholder.textContent = '🎨';
-          card.append(placeholder);
+          const ph = document.createElement('div'); ph.className = 'product-placeholder'; ph.textContent = '🎨'; card.append(ph);
         }
-        const body = document.createElement('div');
-        body.className = 'product-body';
-        const category = document.createElement('span');
-        category.className = 'note';
-        category.textContent = product.category || 'Création numérique';
-        const title = document.createElement('h3');
-        title.textContent = product.name || 'Produit';
-        const desc = document.createElement('p');
-        desc.textContent = product.description || '';
-        const prices = document.createElement('div');
-        prices.className = 'price-line';
+        const body = document.createElement('div'); body.className = 'product-body';
+        const category = document.createElement('span'); category.className = 'note'; category.textContent = product.category || 'Création numérique';
+        const title = document.createElement('h3'); title.textContent = product.name || 'Produit';
+        const desc = document.createElement('p'); desc.textContent = product.description || '';
+        const prices = document.createElement('div'); prices.className = 'price-line';
         const promo = discountInfo(product);
         if (promo) {
           const old = document.createElement('span'); old.className = 'old-price'; old.textContent = money(product.price);
           const current = document.createElement('span'); current.className = 'new-price'; current.textContent = money(promo.price);
-          const tag = document.createElement('span'); tag.className = 'sale-tag'; tag.textContent = promo.label;
-          prices.append(old, current, tag);
-        } else {
-          const current = document.createElement('strong'); current.textContent = money(product.price); prices.append(current);
-        }
-        if (product.requiresImage) {
-          const required = document.createElement('p'); required.className = 'photo-required'; required.textContent = '📷 Photo à fournir lors de la commande';
-          body.append(category, title, desc, prices, required);
-        } else body.append(category, title, desc, prices);
-        const add = document.createElement('button');
-        add.type = 'button'; add.className = 'button'; add.textContent = 'Ajouter au panier';
+          const tag = document.createElement('span'); tag.className = 'sale-tag'; tag.textContent = promo.label; prices.append(old, current, tag);
+        } else { const current = document.createElement('strong'); current.textContent = money(product.price); prices.append(current); }
+        const add = document.createElement('button'); add.type = 'button'; add.className = 'button'; add.textContent = 'Ajouter au panier';
         add.addEventListener('click', () => addToCart(product.id));
+        body.append(category, title, desc, prices);
+        if ((product.customOptions || []).includes('photo') || product.requiresImage) {
+          const req = document.createElement('p'); req.className = 'photo-required'; req.textContent = '📷 Photo à fournir lors de la commande'; body.append(req);
+        }
         body.append(add);
-        card.append(body);
-        grid.append(card);
+
+        const productReviews = reviews.filter(review => review.productId === product.id);
+        const avg = productReviews.length ? productReviews.reduce((sum, r) => sum + Number(r.rating || 0), 0) / productReviews.length : 0;
+        const reviewArea = document.createElement('details'); reviewArea.className = 'review-area';
+        const summary = document.createElement('summary');
+        summary.textContent = productReviews.length ? `Avis (${productReviews.length}) · ${avg.toFixed(1)}/5 ★` : 'Écrire le premier avis';
+        reviewArea.append(summary);
+        if (productReviews.length) {
+          productReviews.slice(0, 4).forEach(review => {
+            const line = document.createElement('p');
+            const stars = document.createElement('span'); stars.className = 'review-stars'; stars.textContent = '★'.repeat(Number(review.rating || 0)) + '☆'.repeat(5 - Number(review.rating || 0));
+            line.append(stars, document.createTextNode(` ${review.name || 'Client'} : ${review.comment || ''}`)); reviewArea.append(line);
+          });
+        }
+        const form = document.createElement('form'); form.className = 'review-form';
+        const name = document.createElement('input'); name.placeholder = 'Ton prénom'; name.required = true; name.maxLength = 50;
+        const rating = document.createElement('select'); rating.required = true;
+        rating.innerHTML = '<option value="">Note sur 5 étoiles</option><option value="5">5 étoiles</option><option value="4">4 étoiles</option><option value="3">3 étoiles</option><option value="2">2 étoiles</option><option value="1">1 étoile</option>';
+        const comment = document.createElement('textarea'); comment.placeholder = 'Ton commentaire'; comment.required = true; comment.maxLength = 500;
+        const send = document.createElement('button'); send.type = 'submit'; send.className = 'small-btn'; send.textContent = 'Envoyer mon avis';
+        form.append(name, rating, comment, send);
+        form.addEventListener('submit', async event => {
+          event.preventDefault(); send.disabled = true;
+          try {
+            await addDoc(collection(db, 'reviews'), { productId: product.id, name: name.value.trim(), rating: Number(rating.value), comment: comment.value.trim(), createdAt: new Date().toISOString() });
+            form.reset(); summary.textContent = 'Merci pour ton avis !';
+          } catch (error) { console.error(error); alert('Impossible d’envoyer cet avis. Vérifie les règles Firestore.'); }
+          finally { send.disabled = false; }
+        });
+        reviewArea.append(form); body.append(reviewArea);
+        card.append(body); grid.append(card);
       });
       renderCart();
+    }
+
+    ['storeSearch', 'storeCategory', 'storeSort', 'saleOnly'].forEach(id => {
+      field(id).addEventListener(id === 'saleOnly' ? 'change' : 'input', renderStore);
+    });
+
+    function refreshCategoryFilter() {
+      const select = field('storeCategory');
+      const current = select.value;
+      const categories = [...new Set(products.map(p => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+      select.replaceChildren(new Option('Toutes les catégories', ''));
+      categories.forEach(category => select.add(new Option(category, category)));
+      select.value = categories.includes(current) ? current : '';
     }
 
     function currentPrice(product) {
@@ -1550,48 +1721,71 @@
       if (!product) return;
       const existing = cart.find(item => item.productId === productId);
       if (existing) existing.quantity += 1;
-      else cart.push({ productId, quantity: 1, photoFile: null });
+      else cart.push({ productId, quantity: 1, photoFile: null, customizations: {} });
       renderCart();
       field('cartPanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
+    function productOptions(product) {
+      const options = Array.isArray(product.customOptions) ? product.customOptions : [];
+      if (product.requiresImage && !options.includes('photo')) options.push('photo');
+      return options;
+    }
+
     function renderCart() {
-      const list = field('cartItems');
-      list.replaceChildren();
+      const list = field('cartItems'); list.replaceChildren();
       const count = cart.reduce((sum, item) => sum + item.quantity, 0);
       field('cartCount').textContent = `(${count})`;
       let total = 0;
-      if (!cart.length) {
-        const empty = document.createElement('p'); empty.className = 'cart-empty'; empty.textContent = 'Ton panier est vide pour le moment.'; list.append(empty);
-      }
+      if (!cart.length) { const empty = document.createElement('p'); empty.className = 'cart-empty'; empty.textContent = 'Ton panier est vide pour le moment.'; list.append(empty); }
       cart.forEach(item => {
-        const product = products.find(p => p.id === item.productId);
-        if (!product) return;
+        const product = products.find(p => p.id === item.productId); if (!product) return;
+        if (!item.customizations) item.customizations = {};
         const row = document.createElement('div'); row.className = 'cart-item';
         const info = document.createElement('div');
         const name = document.createElement('strong'); name.textContent = product.name;
         const detail = document.createElement('p'); detail.textContent = `${money(currentPrice(product))} × ${item.quantity} = ${money(currentPrice(product) * item.quantity)}`;
         info.append(name, detail);
-        if (product.requiresImage) {
-          const label = document.createElement('label'); label.textContent = 'Photo obligatoire pour ce produit *';
-          const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.required = true;
-          input.addEventListener('change', () => { item.photoFile = input.files?.[0] || null; });
-          info.append(label, input);
-          if (item.photoFile) { const chosen = document.createElement('p'); chosen.className = 'note'; chosen.textContent = `Photo choisie : ${item.photoFile.name}`; info.append(chosen); }
-        }
+        productOptions(product).forEach(key => {
+          const def = customizationDefinitions[key]; if (!def) return;
+          const wrap = document.createElement('div'); wrap.className = 'field'; wrap.style.marginTop = '10px';
+          const label = document.createElement('label'); label.textContent = def.label + (key === 'photo' ? ' *' : ''); wrap.append(label);
+          let control;
+          if (def.type === 'textarea') { control = document.createElement('textarea'); control.placeholder = def.placeholder; control.value = item.customizations[key] || ''; }
+          else if (def.type === 'select') {
+            control = document.createElement('select'); control.add(new Option('Choisir...', ''));
+            def.options.forEach(option => control.add(new Option(option, option)));
+            control.value = item.customizations[key] || '';
+          } else if (def.type === 'file') {
+            control = document.createElement('input'); control.type = 'file'; control.accept = 'image/*'; control.required = true;
+            control.addEventListener('change', () => { item.photoFile = control.files?.[0] || null; });
+            if (item.photoFile) { const chosen = document.createElement('p'); chosen.className = 'note'; chosen.textContent = `Photo choisie : ${item.photoFile.name}`; wrap.append(chosen); }
+          } else { control = document.createElement('input'); control.type = 'text'; control.placeholder = def.placeholder; control.value = item.customizations[key] || ''; }
+          if (key !== 'photo') control.addEventListener('input', () => { item.customizations[key] = control.value; });
+          if (key === 'format') control.addEventListener('change', () => { item.customizations[key] = control.value; });
+          wrap.append(control); info.append(wrap);
+        });
         const controls = document.createElement('div'); controls.className = 'cart-controls';
-        const minus = document.createElement('button'); minus.type = 'button'; minus.textContent = '−'; minus.setAttribute('aria-label', 'Retirer un exemplaire');
-        minus.addEventListener('click', () => { item.quantity--; if (item.quantity <= 0) cart = cart.filter(x => x !== item); renderCart(); });
+        const minus = document.createElement('button'); minus.type = 'button'; minus.textContent = '−'; minus.addEventListener('click', () => { item.quantity--; if (item.quantity <= 0) cart = cart.filter(x => x !== item); renderCart(); });
         const qty = document.createElement('strong'); qty.textContent = String(item.quantity);
-        const plus = document.createElement('button'); plus.type = 'button'; plus.textContent = '+'; plus.setAttribute('aria-label', 'Ajouter un exemplaire');
-        plus.addEventListener('click', () => { item.quantity++; renderCart(); });
-        const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Retirer';
-        remove.addEventListener('click', () => { cart = cart.filter(x => x !== item); renderCart(); });
+        const plus = document.createElement('button'); plus.type = 'button'; plus.textContent = '+'; plus.addEventListener('click', () => { item.quantity++; renderCart(); });
+        const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Retirer'; remove.addEventListener('click', () => { cart = cart.filter(x => x !== item); renderCart(); });
         controls.append(minus, qty, plus, remove); row.append(info, controls); list.append(row);
         total += currentPrice(product) * item.quantity;
       });
       field('cartTotal').textContent = money(total);
       field('submitCartOrder').disabled = cart.length === 0;
+    }
+
+    function makeTrackingCode() {
+      const bytes = new Uint8Array(8); crypto.getRandomValues(bytes);
+      return [...bytes].map(value => value.toString(16).padStart(2, '0')).join('').toUpperCase();
+    }
+
+    async function updateOrderStatus(order, status) {
+      await updateDoc(doc(db, 'orders', order.id), { status });
+      if (order.trackingCode) await updateDoc(doc(db, 'tracking', order.trackingCode), { status });
+      order.status = status;
     }
 
     field('clearCartBtn').addEventListener('click', () => { cart = []; renderCart(); });
@@ -1689,7 +1883,7 @@
       if (adminSection.classList.contains('hidden')) return;
       adminLogin.classList.toggle('hidden', adminUnlocked);
       adminPanel.classList.toggle('hidden', !adminUnlocked);
-      if (adminUnlocked) { renderAdminProducts(); loadAdminOrders(); }
+      if (adminUnlocked) { renderAdminProducts(); loadAdminOrders(); renderAdminReviews(); }
     });
 
     field('adminLogout').addEventListener('click', async () => {
@@ -1710,12 +1904,19 @@
     onSnapshot(collection(db, 'products'), snapshot => {
       products = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
       products.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'fr'));
+      refreshCategoryFilter();
       renderStore();
       if (adminUnlocked) renderAdminProducts();
     }, error => {
       console.error(error);
       field('storeGrid').textContent = 'Impossible de charger la boutique pour le moment.';
     });
+
+    onSnapshot(collection(db, 'reviews'), snapshot => {
+      reviews = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
+      renderStore();
+      if (adminUnlocked) renderAdminReviews();
+    }, error => console.error('Chargement des avis impossible', error));
 
     const productForm = field('productForm');
     field('productImageFile').addEventListener('change', () => {
@@ -1735,7 +1936,6 @@
       productForm.reset();
       field('editProductId').value = '';
       field('discountType').value = 'none';
-      field('productRequiresImage').checked = false;
       field('productImagePreview').classList.add('hidden');
       field('productImagePreview').removeAttribute('src');
       field('saveProductBtn').textContent = 'Enregistrer le produit';
@@ -1773,13 +1973,15 @@
         let image = field('productImage').value.trim();
         const imageFile = field('productImageFile').files?.[0];
         if (imageFile) image = await compressImage(imageFile, 420 * 1024);
+        const customOptions = selectedProductOptions();
         const item = {
           name,
           price,
           category: field('productCategory').value,
           image,
           description: field('productDescription').value.trim(),
-          requiresImage: field('productRequiresImage').checked,
+          customOptions,
+          requiresImage: customOptions.includes('photo'),
           discountType,
           discountValue,
           discountStart: start,
@@ -1835,7 +2037,10 @@
           field('productImage').value = product.image || '';
           field('productImageFile').value = '';
           field('productImagePreview').classList.add('hidden');
-          field('productRequiresImage').checked = !!product.requiresImage;
+          document.querySelectorAll('.product-custom-option').forEach(input => {
+            const savedOptions = (product.customOptions && product.customOptions.length) ? product.customOptions : (product.requiresImage ? ['photo'] : []);
+            input.checked = savedOptions.includes(input.value);
+          });
           field('productDescription').value = product.description || '';
           field('discountType').value = product.discountType || 'none';
           field('discountValue').value = product.discountValue || '';
@@ -1863,98 +2068,148 @@
       });
     }
 
+
+    function renderAdminReviews() {
+      const list = field('adminReviewsList');
+      if (!list) return;
+      list.replaceChildren();
+      if (!reviews.length) { const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Aucun avis pour le moment.'; list.append(p); return; }
+      reviews.slice().sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || ''))).forEach(review => {
+        const row = document.createElement('div'); row.className = 'admin-item';
+        const info = document.createElement('div');
+        const product = products.find(p => p.id === review.productId);
+        const title = document.createElement('strong'); title.textContent = `${product?.name || 'Produit'} · ${review.name || 'Client'} · ${review.rating || 0}/5`;
+        const comment = document.createElement('p'); comment.textContent = review.comment || '';
+        info.append(title, comment);
+        const remove = document.createElement('button'); remove.type = 'button'; remove.className = 'danger'; remove.textContent = 'Supprimer l’avis';
+        remove.addEventListener('click', async () => {
+          if (!confirm('Supprimer cet avis ?')) return;
+          try { await deleteDoc(doc(db, 'reviews', review.id)); }
+          catch (error) { console.error(error); alert('Impossible de supprimer cet avis.'); }
+        });
+        row.append(info, remove); list.append(row);
+      });
+    }
+
     // Rafraîchit les promotions selon leurs dates de début et de fin.
     setInterval(() => {
       renderStore();
       if (adminUnlocked) renderAdminProducts();
     }, 60000);
 
-    // Commande du panier : les photos sont téléversées dans Firebase Storage et la commande dans Firestore.
+    // Commande du panier : les photos compressées et la commande sont enregistrées dans Firestore.
     field('cartOrderForm').addEventListener('submit', async event => {
       event.preventDefault();
-      const message = field('cartOrderMessage');
-      const submit = field('submitCartOrder');
+      const message = field('cartOrderMessage'), submit = field('submitCartOrder');
       if (!cart.length) { message.textContent = 'Ton panier est vide.'; message.style.display = 'block'; return; }
       for (const item of cart) {
         const product = products.find(p => p.id === item.productId);
-        if (product?.requiresImage && !item.photoFile) {
-          message.textContent = `Ajoute une photo pour « ${product.name} » avant de commander.`;
-          message.style.display = 'block'; return;
+        if (productOptions(product || {}).includes('photo') && !item.photoFile) {
+          message.textContent = `Ajoute une photo pour « ${product.name} » avant de commander.`; message.style.display = 'block'; return;
         }
       }
-      submit.disabled = true; submit.textContent = 'Envoi en cours...';
-      message.style.display = 'none';
+      submit.disabled = true; submit.textContent = 'Envoi en cours...'; message.style.display = 'none';
       try {
         const orderItems = [];
         for (const item of cart) {
-          const product = products.find(p => p.id === item.productId);
-          if (!product) continue;
-          let photoUrl = '';
+          const product = products.find(p => p.id === item.productId); if (!product) continue;
           let photoId = '';
-          if (product.requiresImage && item.photoFile) {
+          if (productOptions(product).includes('photo') && item.photoFile) {
             const imageData = await compressImage(item.photoFile, 360 * 1024);
             const photoDoc = await addDoc(collection(db, 'orderPhotos'), { imageData, createdAt: new Date().toISOString() });
             photoId = photoDoc.id;
           }
-          orderItems.push({ productId: product.id, name: product.name, quantity: item.quantity, unitPrice: currentPrice(product), photoId });
+          orderItems.push({
+            productId: product.id, name: product.name, quantity: item.quantity,
+            unitPrice: currentPrice(product), photoId,
+            customizations: item.customizations || {}
+          });
         }
         const total = orderItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
-        await addDoc(collection(db, 'orders'), {
+        const trackingCode = makeTrackingCode();
+        const createdAt = new Date().toISOString();
+        const orderRef = await addDoc(collection(db, 'orders'), {
           customerName: field('cartCustomerName').value.trim(),
           customerEmail: field('cartCustomerEmail').value.trim(),
-          notes: field('cartOrderNotes').value.trim(),
-          items: orderItems,
-          total,
-          createdAt: new Date().toISOString(),
-          status: 'Nouvelle'
+          notes: field('cartOrderNotes').value.trim(), items: orderItems, total, createdAt,
+          status: 'Commande reçue', trackingCode
         });
+        await setDoc(doc(db, 'tracking', trackingCode), { status: 'Commande reçue', orderId: orderRef.id, createdAt });
         cart = []; field('cartOrderForm').reset(); renderCart();
-        message.textContent = 'Merci ! Ta commande a bien été envoyée. Pixora Studio pourra la consulter dans son administration.';
+        message.textContent = `Merci ! Ta commande est envoyée. Ton code de suivi est : ${trackingCode}. Garde-le pour consulter le statut de ta commande.`;
         message.style.display = 'block';
       } catch (error) {
         console.error(error);
-        message.textContent = error.message || 'Impossible d’envoyer la commande. Vérifie les règles Firebase Storage et Firestore.';
+        message.textContent = error.message || 'Impossible d’envoyer la commande. Vérifie les règles Firestore.';
         message.style.display = 'block';
-      } finally {
-        submit.disabled = cart.length === 0; submit.textContent = 'Envoyer ma commande';
-      }
+      } finally { submit.disabled = cart.length === 0; submit.textContent = 'Envoyer ma commande'; }
+    });
+
+    field('trackOrderForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const result = field('trackingResult');
+      result.classList.remove('hidden'); result.textContent = 'Recherche du statut...';
+      const code = field('trackingCodeInput').value.trim().toUpperCase();
+      try {
+        const snapshot = await getDoc(doc(db, 'tracking', code));
+        if (!snapshot.exists()) { result.textContent = 'Code de suivi introuvable. Vérifie le code et réessaie.'; return; }
+        const data = snapshot.data();
+        result.textContent = `Statut actuel : ${data.status || 'Commande reçue'}`;
+      } catch (error) { console.error(error); result.textContent = 'Impossible de consulter le suivi. Réessaie plus tard.'; }
     });
 
     async function loadAdminOrders() {
-      const list = field('adminOrdersList');
-      list.replaceChildren();
+      const list = field('adminOrdersList'); list.replaceChildren();
       if (!adminUnlocked) return;
       try {
         const snapshot = await getDocs(collection(db, 'orders'));
         const orders = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
         orders.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
         if (!orders.length) { const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Aucune commande reçue pour le moment.'; list.append(p); return; }
-        orders.forEach(order => {
+        for (const order of orders) {
+          // Dès que l'administration affiche une nouvelle commande, elle passe automatiquement à « analysée ».
+          if ((order.status || 'Commande reçue') === 'Commande reçue') {
+            try { await updateOrderStatus(order, 'Commande analysée'); } catch (statusError) { console.error(statusError); }
+          }
           const card = document.createElement('article'); card.className = 'order-admin-card';
           const heading = document.createElement('strong'); heading.textContent = `${order.customerName || 'Client'} — ${money(order.total)}`;
           const contact = document.createElement('p'); contact.textContent = `${order.customerEmail || ''} · ${order.createdAt ? new Date(order.createdAt).toLocaleString('fr-CA') : ''}`;
-          const items = document.createElement('p'); items.textContent = (order.items || []).map(item => `${item.name} × ${item.quantity}`).join(', ');
-          card.append(heading, contact, items);
-          if (order.notes) { const notes = document.createElement('p'); notes.textContent = `Précisions : ${order.notes}`; card.append(notes); }
-          list.append(card);
-          (order.items || []).forEach(async item => {
-            if (!item.photoId) return;
-            try {
-              const photoSnapshot = await getDoc(doc(db, 'orderPhotos', item.photoId));
-              if (!photoSnapshot.exists()) return;
-              const photo = photoSnapshot.data();
-              const link = document.createElement('a');
-              link.href = photo.imageData; link.download = `photo-${item.name || 'commande'}.jpg`; link.target = '_blank'; link.rel = 'noopener';
-              link.textContent = `Voir la photo fournie pour ${item.name}`; link.style.display = 'block';
-              card.append(link);
-            } catch (photoError) { console.error(photoError); }
+          const code = document.createElement('p'); code.textContent = `Code de suivi : ${order.trackingCode || 'Ancienne commande'}`;
+          const items = document.createElement('div');
+          (order.items || []).forEach(item => {
+            const line = document.createElement('p');
+            const custom = Object.entries(item.customizations || {}).filter(([k, v]) => v).map(([k, v]) => `${customizationDefinitions[k]?.label || k}: ${v}`).join(' · ');
+            line.textContent = `${item.name} × ${item.quantity}${custom ? ' — ' + custom : ''}`;
+            items.append(line);
+            if (item.photoId) {
+              getDoc(doc(db, 'orderPhotos', item.photoId)).then(photoSnapshot => {
+                if (!photoSnapshot.exists()) return;
+                const link = document.createElement('a'); link.href = photoSnapshot.data().imageData;
+                link.download = `photo-${item.name || 'commande'}.jpg`; link.target = '_blank'; link.rel = 'noopener';
+                link.textContent = `Voir la photo fournie pour ${item.name}`; link.style.display = 'block'; card.append(link);
+              }).catch(console.error);
+            }
           });
-        });
+          card.append(heading, contact, code, items);
+          if (order.notes) { const notes = document.createElement('p'); notes.textContent = `Précisions : ${order.notes}`; card.append(notes); }
+          const statusLabel = document.createElement('label'); statusLabel.textContent = 'Statut de la commande';
+          const status = document.createElement('select');
+          ['Commande reçue', 'Commande analysée', 'En fabrication', 'Terminée'].forEach(value => status.add(new Option(value, value)));
+          status.value = order.status || 'Commande reçue';
+          status.addEventListener('change', async () => {
+            status.disabled = true;
+            try { await updateOrderStatus(order, status.value); }
+            catch (error) { console.error(error); alert('Impossible de modifier le statut. Vérifie les règles Firestore.'); status.value = order.status || 'Commande analysée'; }
+            finally { status.disabled = false; }
+          });
+          card.append(statusLabel, status); list.append(card);
+        }
       } catch (error) {
         console.error(error);
         const p = document.createElement('p'); p.className = 'note'; p.textContent = 'Impossible de charger les commandes. Vérifie les règles Firestore.'; list.append(p);
       }
     }
+
     field('refreshOrdersBtn').addEventListener('click', loadAdminOrders);
 
     // Le formulaire de demande personnalisée reste disponible séparément du panier.
